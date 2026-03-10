@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -16,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useFirestore, useAuth, useFirebaseApp } from "@/firebase";
+import { useFirestore, useAuth, useFirebaseApp, useUser } from "@/firebase";
 import { Project, SiteContent, saveAllChanges, deleteProjectDoc, uploadImage, getSiteContent, getProjects } from "@/app/lib/db";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
@@ -29,6 +30,7 @@ export default function AdminDashboard() {
   const auth = useAuth();
   const app = useFirebaseApp();
   const storage = getStorage(app);
+  const { user, loading: authLoading } = useUser();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -36,17 +38,24 @@ export default function AdminDashboard() {
   const [projectsList, setProjectsList] = useState<Project[]>([]);
 
   useEffect(() => {
-    async function loadData() {
-      const [content, projects] = await Promise.all([
-        getSiteContent(db),
-        getProjects(db)
-      ]);
-      setSiteData(content);
-      setProjectsList(projects);
-      setIsLoading(false);
+    if (!authLoading && !user) {
+      router.push("/login");
+      return;
     }
-    loadData();
-  }, [db]);
+
+    if (user) {
+      async function loadData() {
+        const [content, projects] = await Promise.all([
+          getSiteContent(db),
+          getProjects(db)
+        ]);
+        setSiteData(content);
+        setProjectsList(projects);
+        setIsLoading(false);
+      }
+      loadData();
+    }
+  }, [db, user, authLoading, router]);
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -115,13 +124,15 @@ export default function AdminDashboard() {
     }
   };
 
-  if (isLoading) {
+  if (authLoading || (isLoading && user)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-[#050505]">
         <Loader2 className="animate-spin text-primary w-12 h-12" />
       </div>
     );
   }
+
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-[#050505] text-white p-6 md:p-12">
