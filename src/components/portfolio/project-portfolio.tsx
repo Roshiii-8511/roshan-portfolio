@@ -37,9 +37,6 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
     <section className="py-24 px-4 max-w-7xl mx-auto" id="projects">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
         <div className="flex items-center gap-4">
-          <div className="bg-destructive text-destructive-foreground px-3 py-1 rounded-full text-[10px] font-bold tracking-tighter uppercase animate-pulse">
-            Phase II
-          </div>
           <h2 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter uppercase">Project Portfolio</h2>
         </div>
 
