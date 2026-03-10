@@ -17,12 +17,17 @@ function Counter({ value, suffix, duration = 2 }: { value: number; suffix: strin
       if (start === end) return;
 
       const totalMiliseconds = duration * 1000;
-      const incrementTime = totalMiliseconds / end;
+      const incrementTime = Math.max(totalMiliseconds / end, 1); // Ensure at least 1ms interval
 
       const timer = setInterval(() => {
-        start += 1;
-        setDisplayValue(start);
-        if (start === end) clearInterval(timer);
+        setDisplayValue((prev) => {
+          if (prev < end) {
+            return prev + 1;
+          } else {
+            clearInterval(timer);
+            return end;
+          }
+        });
       }, incrementTime);
 
       return () => clearInterval(timer);
@@ -37,7 +42,7 @@ export function FounderProfile({ content }: { content: SiteContent }) {
     { icon: Code2, target: 50, suffix: "+", label: "BOTS BUILT", desc: "Successfully deployed autonomous agents for diverse use cases." },
     { icon: Briefcase, target: 2, suffix: "+", label: "YEARS EXPERIENCE", desc: "Of crafting complex business programs through code." },
     { icon: TrendingUp, target: 400, suffix: "%", label: "REVENUE INCREASE", desc: "Average efficiency gain through automation pipelines." },
-    { icon: BrainCircuit, target: 1, suffix: "M+", label: "DATA POINTS", desc: "Processed daily through high-performance crawlers." },
+    { icon: BrainCircuit, target: 400, suffix: "k", label: "DATA POINTS", desc: "Processed daily through high-performance crawlers." },
   ];
 
   return (
