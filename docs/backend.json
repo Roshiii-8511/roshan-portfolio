@@ -1,44 +1,310 @@
-
 {
   "entities": {
-    "Project": {
-      "title": "Project",
-      "description": "A portfolio project entry.",
+    "GlobalContent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GlobalContent",
       "type": "object",
+      "description": "Stores global configuration and content for the portfolio, managed via the founder dashboard.",
       "properties": {
-        "title": { "type": "string" },
-        "category": { "type": "string", "enum": ["Premium Web Apps", "Advanced Web Scraping", "Bots for Business", "AI Automation"] },
-        "description": { "type": "string" },
-        "summary": { "type": "string" },
-        "images": { "type": "array", "items": { "type": "string" } },
-        "techStack": { "type": "array", "items": { "type": "string" } },
-        "link": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the GlobalContent entity (e.g., 'main-config')."
+        },
+        "headline": {
+          "type": "string",
+          "description": "The dynamic headline displayed in the hero section."
+        },
+        "profileImageUrl": {
+          "type": "string",
+          "description": "URL of the founder's circular profile image, stored in Firebase Storage.",
+          "format": "uri"
+        },
+        "aboutMeContent": {
+          "type": "string",
+          "description": "The rich text content for the 'About Me' section of the founder profile."
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "The primary email address for contact information.",
+          "format": "email"
+        },
+        "contactPhone": {
+          "type": "string",
+          "description": "An optional phone number for contact."
+        }
       },
-      "required": ["title", "category", "description", "summary", "images", "techStack"]
+      "required": [
+        "id",
+        "headline",
+        "profileImageUrl",
+        "aboutMeContent",
+        "contactEmail"
+      ]
     },
-    "SiteContent": {
-      "title": "Site Content",
-      "description": "Global website content and configuration.",
+    "Expertise": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Expertise",
       "type": "object",
+      "description": "Represents a core expertise area showcased with an animated card in the portfolio.",
       "properties": {
-        "headline": { "type": "string" },
-        "aboutMe": { "type": "string" },
-        "profileImage": { "type": "string" }
-      }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Expertise entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the expertise area (e.g., 'Social Media Automation')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the expertise area."
+        },
+        "iconName": {
+          "type": "string",
+          "description": "The name of the icon associated with this expertise area (e.g., from Lucide Icons)."
+        },
+        "displayOrder": {
+          "type": "number",
+          "description": "A numerical value indicating the display order of this expertise card in the UI."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "iconName",
+        "displayOrder"
+      ]
+    },
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
+      "type": "object",
+      "description": "Defines a category for grouping related projects in the portfolio.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Category entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the project category (e.g., 'Premium Web/App', 'Bots for Business')."
+        },
+        "description": {
+          "type": "string",
+          "description": "An optional description for the category."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Project": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Project",
+      "type": "object",
+      "description": "Represents a project in the founder's portfolio, displayed in categorized sections.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Project entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the project."
+        },
+        "summary": {
+          "type": "string",
+          "description": "A short, engaging summary of the project, potentially AI-generated."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the project, potentially AI-generated."
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to the Category this project belongs to. (Relationship: Category 1:N Project)"
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "An array of URLs for images in the project's carousel, stored in Firebase Storage.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "projectUrl": {
+          "type": "string",
+          "description": "An optional URL linking to the live project or a demo.",
+          "format": "uri"
+        },
+        "githubUrl": {
+          "type": "string",
+          "description": "An optional URL linking to the project's GitHub repository.",
+          "format": "uri"
+        },
+        "displayOrder": {
+          "type": "number",
+          "description": "A numerical value indicating the display order of this project within its category or overall portfolio."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the project record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the project record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "summary",
+        "description",
+        "categoryId",
+        "imageUrls",
+        "displayOrder",
+        "createdAt"
+      ]
+    },
+    "SocialLink": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SocialLink",
+      "type": "object",
+      "description": "Stores information for a social media link displayed in the footer.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SocialLink entity."
+        },
+        "platform": {
+          "type": "string",
+          "description": "The name of the social media platform (e.g., 'LinkedIn', 'GitHub', 'Instagram')."
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL to the founder's profile on this social media platform.",
+          "format": "uri"
+        },
+        "iconName": {
+          "type": "string",
+          "description": "The name of the icon representing the social media platform (e.g., 'linkedin', 'github')."
+        },
+        "displayOrder": {
+          "type": "number",
+          "description": "A numerical value indicating the display order of this social link in the footer."
+        }
+      },
+      "required": [
+        "id",
+        "platform",
+        "url",
+        "iconName",
+        "displayOrder"
+      ]
     }
   },
   "auth": {
-    "providers": ["password"]
+    "providers": [
+      "password",
+      "anonymous"
+    ]
   },
   "firestore": {
-    "/projects/{projectId}": {
-      "schema": "#/backend/entities/Project",
-      "description": "Collection of portfolio projects."
-    },
-    "/site/content": {
-      "schema": "#/backend/entities/SiteContent",
-      "description": "Global site configuration document."
-    }
+    "structure": [
+      {
+        "path": "/globalContent/{globalContentId}",
+        "definition": {
+          "entityName": "GlobalContent",
+          "schema": {
+            "$ref": "#/backend/entities/GlobalContent"
+          },
+          "description": "Stores global configuration and content for the portfolio. This collection is publicly readable. Write access is restricted to authenticated founders (admins). Examples include the main headline, profile image URL, and 'About Me' content."
+        }
+      },
+      {
+        "path": "/expertises/{expertiseId}",
+        "definition": {
+          "entityName": "Expertise",
+          "schema": {
+            "$ref": "#/backend/entities/Expertise"
+          },
+          "description": "Collection for individual expertise areas showcased in the portfolio. Each document represents an expertise card. This collection is publicly readable. Write access is restricted to authenticated founders (admins).",
+          "params": [
+            {
+              "name": "expertiseId",
+              "description": "The unique identifier for an Expertise document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Defines categories for grouping projects within the portfolio. This collection is publicly readable. Write access is restricted to authenticated founders (admins).",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "The unique identifier for a Category document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/projects/{projectId}",
+        "definition": {
+          "entityName": "Project",
+          "schema": {
+            "$ref": "#/backend/entities/Project"
+          },
+          "description": "Stores details for each project in the founder's portfolio. Projects reference a Category via `categoryId` field. This collection is publicly readable. Write access is restricted to authenticated founders (admins).",
+          "params": [
+            {
+              "name": "projectId",
+              "description": "The unique identifier for a Project document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/socialLinks/{socialLinkId}",
+        "definition": {
+          "entityName": "SocialLink",
+          "schema": {
+            "$ref": "#/backend/entities/SocialLink"
+          },
+          "description": "Contains links to the founder's social media profiles. This collection is publicly readable. Write access is restricted to authenticated founders (admins).",
+          "params": [
+            {
+              "name": "socialLinkId",
+              "description": "The unique identifier for a SocialLink document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{adminUid}",
+        "definition": {
+          "entityName": "admin",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Dedicated collection for Database-Backed Access Control (DBAC). The existence of a document in this path, where `adminUid` matches `request.auth.uid`, grants administrative privileges (e.g., write access to portfolio content). This ensures Authorization Independence as rules do not need to query content collections for role checks. The schema reference for 'User' is implied as there isn't an explicit 'Role' entity; the document's existence signifies the role. Write access to this collection should be highly restricted (e.g., only by a pre-provisioned admin or system process).",
+          "params": [
+            {
+              "name": "adminUid",
+              "description": "The Firebase Authentication UID of the user designated as an administrator."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to be secure, scalable, and debuggable, strictly adhering to the core design principles. All public-facing content—GlobalContent, Expertise, Category, Project, and SocialLink—resides in top-level collections. This flat structure, coupled with specific fields like `categoryId` in Project documents, simplifies data retrieval for the public UI and avoids deep, complex paths.\n\n**Authorization Independence (CRITICAL):** This design achieves authorization independence by completely avoiding hierarchical authorization dependencies. Instead of relying on `get()` calls to parent documents, all authorization for write operations is based on the requesting user's UID (`request.auth.uid`) and their explicit role, which is denormalized into a dedicated collection: `/roles_admin/{adminUid}`. The mere existence of a document at `/roles_admin/$(request.auth.uid)` grants administrative privileges. This ensures that creating or updating any content document (e.g., a Project) does not require reading a parent Category document for permission, thus supporting atomic operations and significantly simplifying security rules.\n\n**QAPs (Rules are not Filters):** The structure facilitates secure `list` operations (QAPs) through **Structural Segregation**. All documents within the `globalContent`, `expertises`, `categories`, `projects`, and `socialLinks` collections share the exact same security posture: they are **publicly readable by anyone** and **editable only by an authenticated founder (admin)**. This homogeneous security posture means that when a client requests a list of documents from any of these collections, no server-side filtering is required by security rules. The rules simply allow all reads, fulfilling the QAP requirement efficiently and predictably."
   }
 }
