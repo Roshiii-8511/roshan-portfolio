@@ -38,7 +38,6 @@ export default function AdminDashboard() {
   const [siteData, setSiteData] = useState<SiteContent | null>(null);
   const [projectsList, setProjectsList] = useState<Project[]>([]);
   
-  // Local state for file selection
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [projectFileMap, setProjectFileMap] = useState<Record<string, File>>({});
 
@@ -136,9 +135,7 @@ export default function AdminDashboard() {
         ? `profile/roshan-${timestamp}-${file.name}` 
         : `projects/${projectId || 'new'}/${timestamp}-${file.name}`;
       
-      console.log(`Starting upload to: ${path}`);
       const url = await uploadImage(storage, file, path);
-      console.log("Upload success! URL:", url);
       
       if (type === 'profile' && siteData) {
         setSiteData({ ...siteData, profileImage: url });
@@ -156,11 +153,17 @@ export default function AdminDashboard() {
       }
       toast({ title: "Upload successful" });
     } catch (error: any) {
-      console.error("CRITICAL UPLOAD ERROR:", error);
+      console.error("UPLOAD ERROR:", error);
+      
+      let errorMessage = error.message || "Unknown storage error.";
+      if (error.code === 'storage/unauthorized') {
+        errorMessage = "Permission Denied: Please update your Firebase Storage rules to allow authenticated writes.";
+      }
+
       toast({ 
         variant: "destructive", 
         title: "Upload failed", 
-        description: error.message || "Check browser console for detailed logs." 
+        description: errorMessage 
       });
     } finally {
       setIsUploading(null);
@@ -206,7 +209,6 @@ export default function AdminDashboard() {
           </Button>
         </header>
 
-        {/* Global Content Section */}
         <section className="space-y-6">
           <div className="flex items-center gap-2 mb-4">
             <div className="h-1 w-8 bg-primary rounded-full" />
@@ -265,7 +267,6 @@ export default function AdminDashboard() {
           )}
         </section>
 
-        {/* Projects Section */}
         <section className="space-y-6">
           <div className="flex items-center gap-2 mb-4">
             <div className="h-1 w-8 bg-primary rounded-full" />
