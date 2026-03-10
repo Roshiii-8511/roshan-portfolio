@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -25,31 +26,31 @@ export function Footer() {
               href="https://www.linkedin.com/in/roshan-singh-gainipo" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary transition-all duration-300 hover:scale-125"
             >
-              <Linkedin size={20} />
+              <Linkedin size={24} />
             </a>
             <a 
               href="https://github.com/Roshiii-8511" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary transition-all duration-300 hover:scale-125"
             >
-              <Github size={20} />
+              <Github size={24} />
             </a>
             <a 
               href="https://www.instagram.com/singh_.roshan._?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary transition-all duration-300 hover:scale-125"
             >
-              <Instagram size={20} />
+              <Instagram size={24} />
             </a>
             <a 
               href="mailto:raushanar123@gmail.com" 
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary transition-all duration-300 hover:scale-125"
             >
-              <Mail size={20} />
+              <Mail size={24} />
             </a>
           </div>
         </div>
@@ -61,7 +62,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="bg-white text-black px-10 py-4 rounded-full font-headline text-sm font-bold flex items-center gap-3 hover:bg-primary hover:text-white transition-all group tracking-tighter uppercase inline-flex"
           >
-            START A PROJECT <ArrowUpRight size={20} />
+            START A PROJECT <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </a>
         </div>
       </div>

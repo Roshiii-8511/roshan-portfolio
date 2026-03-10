@@ -38,14 +38,14 @@ export default function Home() {
 
   if (projectsLoading || contentLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-[#050505]">
         <Loader2 className="animate-spin text-primary w-12 h-12" />
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-[#050505]">
       <Navbar />
       <Hero content={displayContent} />
       <Expertise />
