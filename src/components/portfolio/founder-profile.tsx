@@ -3,7 +3,7 @@
 
 import { motion } from "framer-motion";
 import { SiteContent } from "@/app/lib/db";
-import { GraduationCap, Briefcase, TrendingUp, Code2 } from "lucide-react";
+import { GraduationCap, Briefcase, TrendingUp, Code2, BrainCircuit } from "lucide-react";
 
 export function FounderProfile({ content }: { content: SiteContent }) {
   return (
