@@ -12,10 +12,36 @@ export function Footer() {
             ENGINEERING THE FUTURE THROUGH AUTONOMOUS SYSTEMS. ARCHITECTING EFFICIENCY AT SCALE.
           </p>
           <div className="flex items-center gap-6 text-muted-foreground">
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Linkedin size={20} /></a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Github size={20} /></a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Instagram size={20} /></a>
-            <a href="mailto:hello@roshansingh.ai" className="hover:text-primary transition-colors"><Mail size={20} /></a>
+            <a 
+              href="https://www.linkedin.com/in/roshan-singh-gainipo" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-primary transition-colors"
+            >
+              <Linkedin size={20} />
+            </a>
+            <a 
+              href="https://github.com/Roshiii-8511" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-primary transition-colors"
+            >
+              <Github size={20} />
+            </a>
+            <a 
+              href="https://www.instagram.com/singh_.roshan._?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-primary transition-colors"
+            >
+              <Instagram size={20} />
+            </a>
+            <a 
+              href="mailto:raushanar123@gmail.com" 
+              className="hover:text-primary transition-colors"
+            >
+              <Mail size={20} />
+            </a>
           </div>
         </div>
 
