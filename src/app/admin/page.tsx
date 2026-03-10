@@ -8,6 +8,7 @@ import {
   Plus,
   Upload,
   Save,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,8 +34,13 @@ export default function AdminDashboard() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState<string | null>(null);
   const [siteData, setSiteData] = useState<SiteContent | null>(null);
   const [projectsList, setProjectsList] = useState<Project[]>([]);
+  
+  // Local state for file selection
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [projectFileMap, setProjectFileMap] = useState<Record<string, File>>({});
 
   useEffect(() => {
     if (authLoading) return;
@@ -102,25 +108,62 @@ export default function AdminDashboard() {
     setProjectsList(projectsList.map(p => p.id === id ? { ...p, ...updates } : p));
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'project', projectId?: string) => {
+  const onFileSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'project', projectId?: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (type === 'profile') {
+      setProfileFile(file);
+    } else if (projectId) {
+      setProjectFileMap(prev => ({ ...prev, [projectId]: file }));
+    }
+  };
+
+  const handleUpload = async (type: 'profile' | 'project', projectId?: string) => {
+    const file = type === 'profile' ? profileFile : (projectId ? projectFileMap[projectId] : null);
+    
+    if (!file) {
+      toast({ variant: "destructive", title: "No file selected", description: "Please pick a file first." });
+      return;
+    }
+
+    const uploadKey = projectId || 'profile';
+    setIsUploading(uploadKey);
+
     try {
-      const path = type === 'profile' ? `profile/${file.name}` : `projects/${projectId}/${file.name}`;
+      const timestamp = Date.now();
+      const path = type === 'profile' 
+        ? `profile/roshan-${timestamp}-${file.name}` 
+        : `projects/${projectId || 'new'}/${timestamp}-${file.name}`;
+      
+      console.log(`Starting upload to: ${path}`);
       const url = await uploadImage(storage, file, path);
+      console.log("Upload success! URL:", url);
       
       if (type === 'profile' && siteData) {
         setSiteData({ ...siteData, profileImage: url });
+        setProfileFile(null);
       } else if (type === 'project' && projectId) {
         const project = projectsList.find(p => p.id === projectId);
         if (project) {
           updateProject(projectId, { images: [...project.images, url] });
+          setProjectFileMap(prev => {
+            const next = { ...prev };
+            delete next[projectId];
+            return next;
+          });
         }
       }
       toast({ title: "Upload successful" });
-    } catch (error) {
-      toast({ variant: "destructive", title: "Upload failed" });
+    } catch (error: any) {
+      console.error("CRITICAL UPLOAD ERROR:", error);
+      toast({ 
+        variant: "destructive", 
+        title: "Upload failed", 
+        description: error.message || "Check browser console for detailed logs." 
+      });
+    } finally {
+      setIsUploading(null);
     }
   };
 
@@ -131,6 +174,7 @@ export default function AdminDashboard() {
       await saveAllChanges(db, siteData, projectsList);
       toast({ title: "Changes saved!" });
     } catch (error) {
+      console.error("Save Error:", error);
       toast({ variant: "destructive", title: "Save failed" });
     } finally {
       setIsSaving(false);
@@ -151,9 +195,12 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-[#050505] text-white p-6 md:p-12">
       <div className="max-w-4xl mx-auto space-y-12">
         <header className="flex justify-between items-center mb-12">
-          <h1 className="font-headline text-3xl font-bold tracking-tighter text-primary uppercase">
-            Founder Dashboard
-          </h1>
+          <div>
+            <h1 className="font-headline text-3xl font-bold tracking-tighter text-primary uppercase">
+              Founder Dashboard
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1 font-code">Authorized: {user.email}</p>
+          </div>
           <Button variant="outline" onClick={handleSignOut} className="gap-2 border-white/10 hover:bg-white/5">
             <LogOut size={16} /> Logout
           </Button>
@@ -178,25 +225,34 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Profile Image URL</Label>
-                  <Input 
-                    value={siteData.profileImage}
-                    onChange={(e) => setSiteData({ ...siteData, profileImage: e.target.value })}
-                    className="bg-black/20 border-white/5 focus:border-primary/50 rounded-xl h-12"
-                  />
+                <div className="space-y-4 pt-4 border-t border-white/5">
+                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Profile Image Management</Label>
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-16 h-16 rounded-full overflow-hidden border border-white/10 bg-black/40">
+                      <img src={siteData.profileImage} alt="Profile" className="object-cover w-full h-full" />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex gap-2">
+                        <Input 
+                          type="file" 
+                          onChange={(e) => onFileSelect(e, 'profile')}
+                          className="bg-black/20 border-white/5 rounded-xl h-10 text-xs file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary"
+                        />
+                        <Button 
+                          onClick={() => handleUpload('profile')}
+                          disabled={!profileFile || isUploading === 'profile'}
+                          className="h-10 px-6 rounded-xl bg-primary hover:bg-primary/90"
+                        >
+                          {isUploading === 'profile' ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+                          <span className="ml-2 text-xs">Upload</span>
+                        </Button>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">Current URL: {siteData.profileImage}</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Upload New Profile Image</Label>
-                  <Input 
-                    type="file" 
-                    onChange={(e) => handleFileUpload(e, 'profile')}
-                    className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                  />
-                </div>
-
-                <div className="space-y-2">
+                <div className="space-y-2 pt-4 border-t border-white/5">
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">About Me</Label>
                   <Textarea 
                     value={siteData.aboutMe}
@@ -275,13 +331,36 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Upload Project Image</Label>
-                    <Input 
-                      type="file" 
-                      onChange={(e) => handleFileUpload(e, 'project', project.id)}
-                      className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                    />
+                  <div className="space-y-4 pt-4 border-t border-white/5">
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Gallery ({project.images.length} images)</Label>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.images.map((img, idx) => (
+                        <div key={idx} className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10">
+                          <img src={img} className="object-cover w-full h-full" alt="Project" />
+                          <button 
+                            onClick={() => updateProject(project.id, { images: project.images.filter((_, i) => i !== idx) })}
+                            className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+                          >
+                            <Trash2 size={12} className="text-destructive" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Input 
+                        type="file" 
+                        onChange={(e) => onFileSelect(e, 'project', project.id)}
+                        className="bg-black/20 border-white/5 rounded-xl h-10 text-xs file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary"
+                      />
+                      <Button 
+                        onClick={() => handleUpload('project', project.id)}
+                        disabled={!projectFileMap[project.id] || isUploading === project.id}
+                        className="h-10 px-6 rounded-xl bg-primary hover:bg-primary/90"
+                      >
+                        {isUploading === project.id ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+                        <span className="ml-2 text-xs">Add Image</span>
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
