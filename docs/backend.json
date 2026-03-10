@@ -7,7 +7,7 @@
       "type": "object",
       "properties": {
         "title": { "type": "string" },
-        "category": { "type": "string", "enum": ["Premium Web/App", "Bots for Business", "AI Integration"] },
+        "category": { "type": "string", "enum": ["Premium Web Apps", "Advanced Web Scraping", "Bots for Business", "AI Automation"] },
         "description": { "type": "string" },
         "summary": { "type": "string" },
         "images": { "type": "array", "items": { "type": "string" } },

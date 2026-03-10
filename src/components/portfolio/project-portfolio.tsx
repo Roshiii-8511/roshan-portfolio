@@ -15,7 +15,7 @@ import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 
 export function ProjectPortfolio({ projects }: { projects: Project[] }) {
-  const categories = ["ALL", "AI INTEGRATION", "SOCIAL MEDIA AUTOMATION", "BOTS FOR BUSINESS"];
+  const categories = ["ALL", "PREMIUM WEB APPS", "ADVANCED WEB SCRAPING", "BOTS FOR BUSINESS", "AI AUTOMATION"];
   const [activeCategory, setActiveCategory] = useState("ALL");
 
   const filteredProjects = activeCategory === "ALL" 
@@ -64,29 +64,36 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
               className="glass-card rounded-[2rem] overflow-hidden group border-white/5"
             >
               <div className="relative aspect-video">
-                <Carousel 
-                  className="w-full h-full"
-                  plugins={[
-                    Autoplay({
-                      delay: 3000,
-                    }),
-                  ]}
-                >
-                  <CarouselContent>
-                    {project.images.map((img, i) => (
-                      <CarouselItem key={i}>
-                        <div className="relative aspect-video w-full h-full">
-                          <Image
-                            src={img}
-                            alt={`${project.title} - image ${i + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                </Carousel>
+                {project.images && project.images.length > 0 ? (
+                  <Carousel 
+                    className="w-full h-full"
+                    plugins={[
+                      Autoplay({
+                        delay: 3000,
+                        stopOnInteraction: false,
+                      }),
+                    ]}
+                  >
+                    <CarouselContent>
+                      {project.images.map((img, i) => (
+                        <CarouselItem key={i}>
+                          <div className="relative aspect-video w-full h-full">
+                            <Image
+                              src={img}
+                              alt={`${project.title} - image ${i + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                    <span className="text-xs text-muted-foreground">No image available</span>
+                  </div>
+                )}
                 <div className="absolute top-6 left-6 z-10">
                   <Badge variant="outline" className="bg-black/40 backdrop-blur-md border-white/10 text-[10px] font-bold">
                     {project.category}
@@ -116,9 +123,6 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
                       <ExternalLink size={14} /> View Project
                     </a>
                   )}
-                  <a href="#" className="flex items-center gap-2 text-xs font-bold hover:text-primary transition-colors tracking-widest uppercase">
-                    <Github size={14} /> Repository
-                  </a>
                 </div>
               </div>
             </motion.div>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -80,7 +81,7 @@ export default function AdminDashboard() {
     const newProject: Project = {
       id: `temp-${Date.now()}`,
       title: "",
-      category: "AI Integration",
+      category: "AI Automation",
       description: "",
       summary: "",
       images: [],
@@ -249,7 +250,6 @@ export default function AdminDashboard() {
                           <span className="ml-2 text-xs">Upload</span>
                         </Button>
                       </div>
-                      <p className="text-[10px] text-muted-foreground">Current URL: {siteData.profileImage}</p>
                     </div>
                   </div>
                 </div>
@@ -313,10 +313,10 @@ export default function AdminDashboard() {
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                         <SelectContent className="bg-[#0a0a0a] border-white/10 text-white">
-                          <SelectItem value="Social Media Automation">Social Media Automation</SelectItem>
-                          <SelectItem value="Premium Web App">Premium Web App</SelectItem>
+                          <SelectItem value="Premium Web Apps">Premium Web Apps</SelectItem>
+                          <SelectItem value="Advanced Web Scraping">Advanced Web Scraping</SelectItem>
                           <SelectItem value="Bots for Business">Bots for Business</SelectItem>
-                          <SelectItem value="AI Integration">AI Integration</SelectItem>
+                          <SelectItem value="AI Automation">AI Automation</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

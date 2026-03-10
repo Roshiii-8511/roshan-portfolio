@@ -1,3 +1,4 @@
+
 import { 
   collection, 
   getDocs, 
@@ -19,7 +20,7 @@ import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/e
 export interface Project {
   id: string;
   title: string;
-  category: 'Premium Web App' | 'Bots for Business' | 'Social Media Automation' | 'AI Integration';
+  category: 'Premium Web Apps' | 'Advanced Web Scraping' | 'Bots for Business' | 'AI Automation';
   description: string;
   summary: string;
   images: string[];
@@ -77,8 +78,6 @@ export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, pr
   batch.set(siteRef, siteContent, { merge: true });
 
   // Handle Projects
-  // Note: For a robust system, we should track deleted projects too. 
-  // For this MVP, we'll update existing or add new ones.
   projects.forEach((project) => {
     const data = {
       ...project,
@@ -86,7 +85,6 @@ export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, pr
       createdAt: project.id.startsWith('temp-') ? serverTimestamp() : (project.createdAt || serverTimestamp())
     };
     
-    // If it's a new project (temp ID), create a new doc ref with auto ID
     if (project.id.startsWith('temp-')) {
       const newDocRef = doc(collection(db, 'projects'));
       const { id, ...saveData } = data;
