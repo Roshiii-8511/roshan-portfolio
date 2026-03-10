@@ -1,4 +1,3 @@
-
 import { 
   collection, 
   getDocs, 
@@ -96,11 +95,14 @@ export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, pr
   });
 
   return batch.commit().catch(async (error) => {
-    errorEmitter.emit('permission-error', new FirestorePermissionError({
-      path: 'multiple',
+    // Create detailed context for the error emitter
+    const permissionError = new FirestorePermissionError({
+      path: 'batch-write-projects-and-site',
       operation: 'write',
       requestResourceData: { siteContent, projectsCount: projects.length },
-    }));
+    } satisfies SecurityRuleContext);
+    
+    errorEmitter.emit('permission-error', permissionError);
     throw error;
   });
 };
@@ -112,6 +114,7 @@ export const deleteProjectDoc = (db: Firestore, id: string) => {
     errorEmitter.emit('permission-error', new FirestorePermissionError({
       path: docRef.path,
       operation: 'delete',
-    }));
+    } satisfies SecurityRuleContext));
+    throw error;
   });
 };

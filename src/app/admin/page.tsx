@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -63,7 +62,7 @@ export default function AdminDashboard() {
         toast({
           variant: "destructive",
           title: "Failed to load data",
-          description: "Check your database permissions.",
+          description: "Check your database permissions in Firebase Console.",
         });
       } finally {
         setIsLoading(false);
@@ -99,6 +98,7 @@ export default function AdminDashboard() {
         setProjectsList(projectsList.filter(p => p.id !== id));
         toast({ title: "Project deleted" });
       } catch (err) {
+        // Detailed error already handled by emitter
         toast({ variant: "destructive", title: "Delete failed" });
       }
     }
@@ -177,9 +177,17 @@ export default function AdminDashboard() {
     try {
       await saveAllChanges(db, siteData, projectsList);
       toast({ title: "Changes saved!" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Save Error:", error);
-      toast({ variant: "destructive", title: "Save failed" });
+      let desc = "Check your Firestore rules in Firebase Console.";
+      if (error.code === 'permission-denied') {
+        desc = "Firestore Error: Permission Denied. Ensure your Firestore rules allow 'write' for authenticated users.";
+      }
+      toast({ 
+        variant: "destructive", 
+        title: "Save failed", 
+        description: desc
+      });
     } finally {
       setIsSaving(false);
     }
