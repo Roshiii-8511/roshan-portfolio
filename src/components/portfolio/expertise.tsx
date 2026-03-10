@@ -52,18 +52,19 @@ export function Expertise() {
             whileInView={{ opacity: 1, y: 0 }}
             whileHover={{ 
               scale: 1.05, 
-              y: -10,
-              boxShadow: "0 20px 40px rgba(255,123,0,0.2)",
-              borderColor: "hsla(29, 100%, 50%, 0.4)"
+              y: -12,
+              boxShadow: "0 25px 50px -12px rgba(255, 123, 0, 0.4)",
+              borderColor: "hsla(29, 100%, 50%, 0.4)",
+              backgroundColor: "rgba(255, 255, 255, 0.05)"
             }}
             viewport={{ once: true }}
             transition={{ 
               type: "spring", 
-              stiffness: 300, 
-              damping: 20,
-              delay: index * 0.1 
+              stiffness: 400, 
+              damping: 15,
+              delay: index * 0.05 
             }}
-            className="glass-card p-8 rounded-3xl border-white/5 transition-all group cursor-default"
+            className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default"
           >
             <div className={`mb-6 ${item.color} group-hover:scale-110 transition-transform duration-300`}>
               <item.icon size={32} />

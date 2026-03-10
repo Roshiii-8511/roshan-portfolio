@@ -1,95 +1,49 @@
-/**
- * FIRESTORE SECURITY RULES
- * 
- * Core Philosophy:
- * This ruleset implements a Role-Based Access Control (RBAC) model optimized for a professional 
- * portfolio. It distinguishes between the "Founder/Admin" who manages content and the "Public" 
- * who consumes it. Security is anchored in a dedicated /roles_admin/ collection where the 
- * existence of a document grants global write privileges.
- */
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // --- Helper Functions ---
-
-    /**
-     * @description Checks if the request is made by an authenticated user.
-     */
     function isSignedIn() {
       return request.auth != null;
     }
-
-    /**
-     * @description Verifies if the authenticated user has administrative privileges 
-     * by checking for their UID in the roles_admin collection.
-     */
     function isAdmin() {
       return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
-
-    /**
-     * @description Ensures the document exists before allowing modifications or deletions.
-     */
     function isExisting() {
       return resource != null;
     }
 
-    // --- Collection Rules ---
-
-    /**
-     * @description Stores global configuration and site-wide content.
-     * Maps to 'site/content' used in the application code.
-     */
     match /site/{siteId} {
       allow get, list: if true;
       allow create: if isAdmin();
       allow update, delete: if isAdmin() && isExisting();
     }
 
-    /**
-     * @description Individual expertise areas showcased in the portfolio.
-     */
     match /expertises/{expertiseId} {
       allow get, list: if true;
       allow create: if isAdmin();
       allow update, delete: if isAdmin() && isExisting();
     }
 
-    /**
-     * @description Grouping categories for projects.
-     */
     match /categories/{categoryId} {
       allow get, list: if true;
       allow create: if isAdmin();
       allow update, delete: if isAdmin() && isExisting();
     }
 
-    /**
-     * @description Detailed project information.
-     */
     match /projects/{projectId} {
       allow get, list: if true;
       allow create: if isAdmin();
       allow update, delete: if isAdmin() && isExisting();
     }
 
-    /**
-     * @description Links to external social media profiles.
-     */
     match /socialLinks/{socialLinkId} {
       allow get, list: if true;
       allow create: if isAdmin();
       allow update, delete: if isAdmin() && isExisting();
     }
 
-    /**
-     * @description Database-Backed Access Control (DBAC) for admin roles.
-     */
     match /roles_admin/{adminUid} {
       allow get: if isSignedIn() && request.auth.uid == adminUid;
-      allow list, create, update, delete: if false; // Only manageable via Firebase Console for security.
+      allow list, create, update, delete: if false;
     }
   }
 }

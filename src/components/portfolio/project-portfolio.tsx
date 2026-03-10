@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -18,10 +17,8 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
   const categories = ["ALL", "PREMIUM WEB APPS", "ADVANCED WEB SCRAPING", "BOTS FOR BUSINESS", "AI AUTOMATION"];
   const [activeCategory, setActiveCategory] = useState("ALL");
 
-  // Fallback to empty array if projects is null or undefined
   const safeProjects = projects || [];
 
-  // Priority mapping for categories when "ALL" is selected
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -75,13 +72,13 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
                 scale: 1.05, 
-                y: -10,
-                boxShadow: "0 30px 60px rgba(0,0,0,0.6)",
+                y: -15,
+                boxShadow: "0 30px 60px -15px rgba(0,0,0,0.8), 0 0 20px rgba(255, 123, 0, 0.2)",
                 borderColor: "hsla(29, 100%, 50%, 0.4)"
               }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="glass-card rounded-[2rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300"
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300"
             >
               <div className="relative aspect-video overflow-hidden">
                 {project.images && project.images.length > 0 ? (
@@ -115,7 +112,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                   </div>
                 )}
                 <div className="absolute top-6 left-6 z-10">
-                  <Badge variant="outline" className="bg-black/40 backdrop-blur-md border-white/10 text-[10px] font-bold">
+                  <Badge variant="outline" className="bg-black/60 backdrop-blur-md border-white/10 text-[10px] font-bold">
                     {project.category}
                   </Badge>
                 </div>
@@ -125,7 +122,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                 <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight">
                   {project.title}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6 line-clamp-3">
                   {project.summary}
                 </p>
                 
