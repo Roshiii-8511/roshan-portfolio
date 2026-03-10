@@ -1,4 +1,3 @@
-
 # Settings to manage and configure a Firebase App Hosting backend.
 # https://firebase.google.com/docs/app-hosting/configure
 
@@ -7,7 +6,7 @@ runConfig:
   # more instances in response to increased traffic.
   maxInstances: 2
   cpu: 1
-  memoryMiB: 1024
+  memoryMiB: 2048
 
 env:
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
