@@ -18,7 +18,7 @@ export function Footer() {
           <h2 className="font-headline text-3xl font-bold mb-6 tracking-tighter uppercase">
             ROSHAN <span className="text-primary">SINGH</span>
           </h2>
-          <p className="text-muted-foreground text-sm leading-relaxed mb-8">
+          <p className="text-muted-foreground text-sm leading-relaxed mb-8 font-code uppercase tracking-tighter">
             ENGINEERING THE FUTURE THROUGH AUTONOMOUS SYSTEMS. ARCHITECTING EFFICIENCY AT SCALE.
           </p>
           <div className="flex items-center gap-6 text-muted-foreground">
@@ -60,7 +60,7 @@ export function Footer() {
             href="https://www.upwork.com/freelancers/~015e9eaa4d183e12b3" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="bg-white text-black px-10 py-4 rounded-full font-headline text-sm font-bold flex items-center gap-3 hover:bg-primary hover:text-white transition-all group tracking-tighter uppercase inline-flex"
+            className="bg-white text-black px-10 py-4 rounded-full font-headline text-sm font-bold flex items-center gap-3 hover:bg-primary hover:text-white transition-all group tracking-tighter uppercase inline-flex shadow-[0_0_30px_rgba(255,255,255,0.1)]"
           >
             START A PROJECT <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </a>
@@ -68,10 +68,10 @@ export function Footer() {
       </div>
       
       <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-muted-foreground font-code uppercase tracking-widest">
-        <div>&copy; {year || 2024} ROSHAN SINGH — POWERED BY THE FUTURE</div>
+        <div>&copy; {year || 2025} ROSHAN SINGH — POWERED BY THE FUTURE</div>
         <div className="flex gap-8">
-          <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-white transition-colors">PRIVACY POLICY</a>
+          <a href="#" className="hover:text-white transition-colors">TERMS OF SERVICE</a>
         </div>
       </div>
     </footer>

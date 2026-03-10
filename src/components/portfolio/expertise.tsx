@@ -54,9 +54,11 @@ export function Expertise() {
             viewport={{ once: true }}
             whileHover={{ 
               scale: 1.05, 
-              y: -12,
-              boxShadow: "0 25px 50px -12px rgba(255, 123, 0, 0.4)",
-              borderColor: "hsla(29, 100%, 50%, 0.4)",
+              y: -15,
+              rotateX: 2,
+              rotateY: 2,
+              boxShadow: "0 40px 80px -20px rgba(255, 123, 0, 0.4)",
+              borderColor: "hsla(29, 100%, 50%, 0.5)",
               backgroundColor: "rgba(255, 255, 255, 0.05)"
             }}
             transition={{ 
@@ -65,15 +67,18 @@ export function Expertise() {
               damping: 17,
               delay: index * 0.05 
             }}
-            className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default"
+            className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default relative overflow-hidden"
           >
-            <div className={`mb-6 ${item.color} group-hover:scale-125 transition-transform duration-300 ease-out`}>
+            <div className={`mb-6 ${item.color} group-hover:scale-110 transition-transform duration-300 ease-out flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.03]`}>
               <item.icon size={36} />
             </div>
-            <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors">{item.title}</h3>
+            <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">
+              {item.title}
+            </h3>
             <p className="text-muted-foreground leading-relaxed text-sm">
               {item.description}
             </p>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500" />
           </motion.div>
         ))}
       </div>

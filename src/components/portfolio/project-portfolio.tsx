@@ -5,7 +5,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/app/lib/db";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -33,7 +33,6 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
         const priorityA = categoryPriority[a.category?.toUpperCase() || ""] || 99;
         const priorityB = categoryPriority[b.category?.toUpperCase() || ""] || 99;
         if (priorityA !== priorityB) return priorityA - priorityB;
-        // Secondary sort by date
         return 0;
       })
     : safeProjects.filter(p => p.category?.toUpperCase() === activeCategory);
@@ -52,7 +51,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 rounded-full text-[10px] font-bold tracking-widest transition-all uppercase ${
                 activeCategory === cat
-                  ? "bg-primary text-white shadow-lg"
+                  ? "bg-primary text-white shadow-lg shadow-primary/20 scale-105"
                   : "bg-white/5 hover:bg-white/10 text-muted-foreground"
               }`}
             >
@@ -64,7 +63,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
       <motion.div 
         layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
       >
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project) => (
@@ -76,12 +75,12 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               whileHover={{ 
                 scale: 1.05, 
                 y: -15,
-                boxShadow: "0 40px 80px -20px rgba(0,0,0,0.7), 0 0 30px rgba(255, 123, 0, 0.25)",
-                borderColor: "hsla(29, 100%, 50%, 0.4)"
+                boxShadow: "0 50px 100px -20px rgba(0,0,0,0.8), 0 0 30px rgba(255, 123, 0, 0.3)",
+                borderColor: "hsla(29, 100%, 50%, 0.5)"
               }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300"
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300 bg-white/[0.02]"
             >
               <div className="relative aspect-video overflow-hidden">
                 {project.images && project.images.length > 0 ? (
@@ -89,7 +88,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                     className="w-full h-full"
                     plugins={[
                       Autoplay({
-                        delay: 3000,
+                        delay: 4000,
                         stopOnInteraction: false,
                       }),
                     ]}
@@ -111,18 +110,18 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                   </Carousel>
                 ) : (
                   <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                    <span className="text-xs text-muted-foreground">No image available</span>
+                    <span className="text-xs text-muted-foreground font-code">NO DATA AVAILABLE</span>
                   </div>
                 )}
                 <div className="absolute top-6 left-6 z-10">
-                  <Badge variant="outline" className="bg-black/60 backdrop-blur-md border-white/10 text-[10px] font-bold">
+                  <Badge variant="outline" className="bg-black/80 backdrop-blur-md border-primary/30 text-[9px] font-bold tracking-widest uppercase px-3 py-1">
                     {project.category}
                   </Badge>
                 </div>
               </div>
 
               <div className="p-8">
-                <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight">
+                <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">
                   {project.title}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed mb-6 line-clamp-3">
@@ -131,16 +130,21 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                 
                 <div className="flex flex-wrap gap-2 mb-8">
                   {project.techStack?.map(tech => (
-                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent/80 transition-colors group-hover:bg-accent/15">
-                      #{tech}
+                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-primary/80 transition-colors group-hover:bg-primary/10">
+                      #{tech.toUpperCase()}
                     </span>
                   ))}
                 </div>
 
                 <div className="flex items-center gap-6">
                   {project.link && (
-                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-bold hover:text-primary transition-colors tracking-widest uppercase">
-                      <ExternalLink size={14} /> View Project
+                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[10px] font-bold hover:text-primary transition-colors tracking-widest uppercase">
+                      <ExternalLink size={14} /> LIVE DEMO
+                    </a>
+                  )}
+                  {project.githubLink && (
+                    <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[10px] font-bold hover:text-primary transition-colors tracking-widest uppercase">
+                      <Github size={14} /> SOURCE
                     </a>
                   )}
                 </div>

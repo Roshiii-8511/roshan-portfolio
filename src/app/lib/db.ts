@@ -27,6 +27,7 @@ export interface Project {
   link?: string;
   githubLink?: string;
   createdAt?: any;
+  displayOrder?: number;
 }
 
 export interface SiteContent {
@@ -75,28 +76,30 @@ export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, pr
   const batch = writeBatch(db);
 
   const siteRef = doc(db, 'globalContent', 'main-config');
-  batch.set(siteRef, { ...siteContent, id: 'main-config' }, { merge: true });
+  batch.set(siteRef, { ...siteContent }, { merge: true });
 
   projects.forEach((project) => {
+    const { id, ...saveData } = project;
+    const isNew = id.startsWith('temp-');
+    
     const data = {
-      ...project,
+      ...saveData,
       updatedAt: serverTimestamp(),
-      createdAt: project.id.startsWith('temp-') ? serverTimestamp() : (project.createdAt || serverTimestamp())
+      createdAt: isNew ? serverTimestamp() : (project.createdAt || serverTimestamp())
     };
     
-    if (project.id.startsWith('temp-')) {
+    if (isNew) {
       const newDocRef = doc(collection(db, 'projects'));
-      const { id, ...saveData } = data;
-      batch.set(newDocRef, saveData);
+      batch.set(newDocRef, data);
     } else {
-      const docRef = doc(db, 'projects', project.id);
+      const docRef = doc(db, 'projects', id);
       batch.set(docRef, data, { merge: true });
     }
   });
 
   return batch.commit().catch(async (error) => {
     const permissionError = new FirestorePermissionError({
-      path: 'batch-write-projects-and-globalContent',
+      path: 'globalContent/main-config',
       operation: 'write',
       requestResourceData: { siteContent, projectsCount: projects.length },
     } satisfies SecurityRuleContext);
