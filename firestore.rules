@@ -11,7 +11,7 @@ service cloud.firestore {
       return resource != null;
     }
 
-    match /site/{siteId} {
+    match /globalContent/{contentId} {
       allow get, list: if true;
       allow create: if isAdmin();
       allow update, delete: if isAdmin() && isExisting();

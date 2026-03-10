@@ -19,7 +19,6 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
-  // Sorting priority: Premium Web Apps first
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -72,13 +71,13 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
-                scale: 1.05, 
-                y: -15,
-                boxShadow: "0 30px 60px -15px rgba(0,0,0,0.8), 0 0 20px rgba(255, 123, 0, 0.2)",
-                borderColor: "hsla(29, 100%, 50%, 0.4)"
+                scale: 1.04, 
+                y: -10,
+                boxShadow: "0 30px 60px -15px rgba(0,0,0,0.6), 0 0 20px rgba(255, 123, 0, 0.15)",
+                borderColor: "hsla(29, 100%, 50%, 0.3)"
               }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300"
             >
               <div className="relative aspect-video overflow-hidden">
@@ -100,7 +99,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                               src={img}
                               alt={`${project.title} - image ${i + 1}`}
                               fill
-                              className="object-cover transition-transform duration-700 group-hover:scale-110"
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                           </div>
                         </CarouselItem>

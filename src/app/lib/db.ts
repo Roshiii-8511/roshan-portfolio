@@ -4,7 +4,6 @@ import {
   doc, 
   getDoc, 
   setDoc, 
-  addDoc, 
   deleteDoc, 
   query, 
   orderBy,
@@ -48,7 +47,7 @@ export const getProjects = async (db: Firestore): Promise<Project[]> => {
 
 export const getSiteContent = async (db: Firestore): Promise<SiteContent> => {
   try {
-    const docRef = doc(db, 'site', 'content');
+    const docRef = doc(db, 'globalContent', 'main-config');
     const snapshot = await getDoc(docRef);
     if (snapshot.exists()) {
       return snapshot.data() as SiteContent;
@@ -72,8 +71,8 @@ export async function uploadImage(storage: FirebaseStorage, file: File, path: st
 export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, projects: Project[]) => {
   const batch = writeBatch(db);
 
-  // Save Site Content
-  const siteRef = doc(db, 'site', 'content');
+  // Save Site Content (using the correct path from backend.json)
+  const siteRef = doc(db, 'globalContent', 'main-config');
   batch.set(siteRef, siteContent, { merge: true });
 
   // Handle Projects
@@ -95,9 +94,8 @@ export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, pr
   });
 
   return batch.commit().catch(async (error) => {
-    // Create detailed context for the error emitter
     const permissionError = new FirestorePermissionError({
-      path: 'batch-write-projects-and-site',
+      path: 'batch-write-projects-and-globalContent',
       operation: 'write',
       requestResourceData: { siteContent, projectsCount: projects.length },
     } satisfies SecurityRuleContext);

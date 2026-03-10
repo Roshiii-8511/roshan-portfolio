@@ -52,16 +52,16 @@ export function Expertise() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ 
-              scale: 1.05, 
-              y: -12,
-              boxShadow: "0 25px 50px -12px rgba(255, 123, 0, 0.4)",
-              borderColor: "hsla(29, 100%, 50%, 0.4)",
-              backgroundColor: "rgba(255, 255, 255, 0.05)"
+              scale: 1.03, 
+              y: -8,
+              boxShadow: "0 20px 40px -12px rgba(255, 123, 0, 0.3)",
+              borderColor: "hsla(29, 100%, 50%, 0.3)",
+              backgroundColor: "rgba(255, 255, 255, 0.04)"
             }}
             transition={{ 
               type: "spring", 
-              stiffness: 400, 
-              damping: 15,
+              stiffness: 300, 
+              damping: 20,
               delay: index * 0.05 
             }}
             className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default"
