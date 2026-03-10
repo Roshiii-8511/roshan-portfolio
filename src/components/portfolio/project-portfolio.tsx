@@ -5,7 +5,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/app/lib/db";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -14,9 +14,12 @@ import {
 import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 
-export function ProjectPortfolio({ projects }: { projects: Project[] }) {
+export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
   const categories = ["ALL", "PREMIUM WEB APPS", "ADVANCED WEB SCRAPING", "BOTS FOR BUSINESS", "AI AUTOMATION"];
   const [activeCategory, setActiveCategory] = useState("ALL");
+
+  // Fallback to empty array if projects is null or undefined
+  const safeProjects = projects || [];
 
   // Priority mapping for categories when "ALL" is selected
   const categoryPriority: Record<string, number> = {
@@ -27,12 +30,13 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
   };
 
   const filteredProjects = activeCategory === "ALL" 
-    ? [...projects].sort((a, b) => {
+    ? [...safeProjects].sort((a, b) => {
         const priorityA = categoryPriority[a.category.toUpperCase()] || 99;
         const priorityB = categoryPriority[b.category.toUpperCase()] || 99;
-        return priorityA - priorityB;
+        if (priorityA !== priorityB) return priorityA - priorityB;
+        return 0;
       })
-    : projects.filter(p => p.category.toUpperCase() === activeCategory);
+    : safeProjects.filter(p => p.category.toUpperCase() === activeCategory);
 
   return (
     <section className="py-24 px-4 max-w-7xl mx-auto" id="projects">
@@ -72,8 +76,8 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
               whileHover={{ 
                 scale: 1.05, 
                 y: -10,
-                boxShadow: "0 30px 60px rgba(0,0,0,0.5)",
-                borderColor: "hsla(29, 100%, 50%, 0.3)"
+                boxShadow: "0 30px 60px rgba(0,0,0,0.6)",
+                borderColor: "hsla(29, 100%, 50%, 0.4)"
               }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}

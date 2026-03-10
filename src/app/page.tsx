@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFirestore, useCollection, useDoc, useMemoFirebase } from "@/firebase";
@@ -18,7 +19,7 @@ export default function Home() {
     return query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
   }, [db]);
   
-  const { data: projects = [], loading: projectsLoading } = useCollection<Project>(projectsQuery);
+  const { data: projectsData, loading: projectsLoading } = useCollection<Project>(projectsQuery);
   
   const siteContentRef = useMemoFirebase(() => {
     return doc(db, 'site', 'content');
@@ -33,8 +34,9 @@ export default function Home() {
   };
 
   const displayContent = siteContent || fallbackContent;
+  const projects = projectsData || [];
 
-  if (projectsLoading && contentLoading) {
+  if (projectsLoading || contentLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="animate-spin text-primary w-12 h-12" />

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -54,8 +53,8 @@ export function Expertise() {
             whileHover={{ 
               scale: 1.05, 
               y: -10,
-              boxShadow: "0 20px 40px rgba(255,123,0,0.15)",
-              borderColor: "hsla(29, 100%, 50%, 0.3)"
+              boxShadow: "0 20px 40px rgba(255,123,0,0.2)",
+              borderColor: "hsla(29, 100%, 50%, 0.4)"
             }}
             viewport={{ once: true }}
             transition={{ 
