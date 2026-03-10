@@ -1,6 +1,16 @@
+
+"use client";
+
+import { useEffect, useState } from "react";
 import { Instagram, Linkedin, Github, Mail, ArrowUpRight } from "lucide-react";
 
 export function Footer() {
+  const [year, setYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="py-24 px-6 border-t border-white/5 bg-background" id="contact">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16 md:gap-0">
@@ -58,7 +68,7 @@ export function Footer() {
       </div>
       
       <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-muted-foreground font-code uppercase tracking-widest">
-        <div>&copy; {new Date().getFullYear()} ROSHAN SINGH — POWERED BY THE FUTURE</div>
+        <div>&copy; {year || "..."} ROSHAN SINGH — POWERED BY THE FUTURE</div>
         <div className="flex gap-8">
           <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
           <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
