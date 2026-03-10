@@ -1,4 +1,3 @@
-
 import { Instagram, Linkedin, Github, Mail, ArrowUpRight } from "lucide-react";
 
 export function Footer() {
@@ -13,17 +12,22 @@ export function Footer() {
             ENGINEERING THE FUTURE THROUGH AUTONOMOUS SYSTEMS. ARCHITECTING EFFICIENCY AT SCALE.
           </p>
           <div className="flex items-center gap-6 text-muted-foreground">
-            <a href="#" className="hover:text-primary transition-colors"><Linkedin size={20} /></a>
-            <a href="#" className="hover:text-primary transition-colors"><Github size={20} /></a>
-            <a href="#" className="hover:text-primary transition-colors"><Instagram size={20} /></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Linkedin size={20} /></a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Github size={20} /></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Instagram size={20} /></a>
             <a href="mailto:hello@roshansingh.ai" className="hover:text-primary transition-colors"><Mail size={20} /></a>
           </div>
         </div>
 
         <div className="flex flex-col items-start md:items-end">
-          <button className="bg-white text-black px-10 py-4 rounded-full font-headline text-sm font-bold flex items-center gap-3 hover:bg-primary hover:text-white transition-all group tracking-tighter uppercase">
+          <a 
+            href="https://www.upwork.com/freelancers/~015e9eaa4d183e12b3" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-white text-black px-10 py-4 rounded-full font-headline text-sm font-bold flex items-center gap-3 hover:bg-primary hover:text-white transition-all group tracking-tighter uppercase inline-flex"
+          >
             START A PROJECT <ArrowUpRight size={20} />
-          </button>
+          </a>
         </div>
       </div>
       
