@@ -1,301 +1,331 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
-  LayoutDashboard, 
-  Briefcase, 
-  UserCircle, 
-  Plus, 
   Trash2, 
   LogOut,
-  Loader2
+  Loader2,
+  Plus,
+  Upload,
+  Save,
+  CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useFirestore, useAuth, useCollection, useDoc, useMemoFirebase } from "@/firebase";
-import { Project, SiteContent, saveProject, deleteProject, updateSiteContent } from "@/app/lib/db";
+import { useFirestore, useAuth, useFirebaseApp } from "@/firebase";
+import { Project, SiteContent, saveAllChanges, deleteProjectDoc, uploadImage, getSiteContent, getProjects } from "@/app/lib/db";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
-import { collection, query, orderBy, doc } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { toast } from "@/hooks/use-toast";
 
 export default function AdminDashboard() {
   const router = useRouter();
   const db = useFirestore();
   const auth = useAuth();
-  const [activeTab, setActiveTab] = useState("overview");
-  
-  const projectsQuery = useMemoFirebase(() => {
-    return query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
-  }, [db]);
+  const app = useFirebaseApp();
+  const storage = getStorage(app);
 
-  const { data: projects = [], loading: projectsLoading } = useCollection<Project>(projectsQuery);
-  
-  const siteContentRef = useMemoFirebase(() => {
-    return doc(db, 'site', 'content');
-  }, [db]);
-  
-  const { data: siteContent } = useDoc<SiteContent>(siteContentRef);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [siteData, setSiteData] = useState<SiteContent | null>(null);
+  const [projectsList, setProjectsList] = useState<Project[]>([]);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
+  useEffect(() => {
+    async function loadData() {
+      const [content, projects] = await Promise.all([
+        getSiteContent(db),
+        getProjects(db)
+      ]);
+      setSiteData(content);
+      setProjectsList(projects);
+      setIsLoading(false);
+    }
+    loadData();
+  }, [db]);
 
   const handleSignOut = async () => {
     await signOut(auth);
     router.push("/login");
   };
 
-  const handleSaveProject = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingProject?.title) return;
-    
-    saveProject(db, {
-      title: editingProject.title || "",
-      category: (editingProject.category as any) || "AI Integration",
-      description: editingProject.description || "",
-      summary: editingProject.summary || "",
-      images: editingProject.images || ["https://picsum.photos/seed/new/800/600"],
-      techStack: editingProject.techStack || ["AI"],
-      link: editingProject.link || ""
-    }, editingProject.id);
-    
-    setIsDialogOpen(false);
-    setEditingProject(null);
+  const addProject = () => {
+    const newProject: Project = {
+      id: `temp-${Date.now()}`,
+      title: "",
+      category: "AI Integration",
+      description: "",
+      summary: "",
+      images: [],
+      techStack: [],
+      link: "",
+      githubLink: ""
+    };
+    setProjectsList([newProject, ...projectsList]);
   };
 
+  const removeProject = async (id: string) => {
+    if (confirm("Are you sure you want to delete this project?")) {
+      await deleteProjectDoc(db, id);
+      setProjectsList(projectsList.filter(p => p.id !== id));
+      toast({ title: "Project deleted", description: "The project has been removed from the database." });
+    }
+  };
+
+  const updateProject = (id: string, updates: Partial<Project>) => {
+    setProjectsList(projectsList.map(p => p.id === id ? { ...p, ...updates } : p));
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'project', projectId?: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const path = type === 'profile' ? `profile/${file.name}` : `projects/${projectId}/${file.name}`;
+      const url = await uploadImage(storage, file, path);
+      
+      if (type === 'profile' && siteData) {
+        setSiteData({ ...siteData, profileImage: url });
+      } else if (type === 'project' && projectId) {
+        const project = projectsList.find(p => p.id === projectId);
+        if (project) {
+          updateProject(projectId, { images: [...project.images, url] });
+        }
+      }
+      toast({ title: "Upload successful", description: "Image has been uploaded and linked." });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Upload failed", description: "There was an error uploading your image." });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!siteData) return;
+    setIsSaving(true);
+    try {
+      await saveAllChanges(db, siteData, projectsList);
+      toast({ title: "Changes saved!", description: "Portfolio has been updated successfully." });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Save failed", description: "Could not save changes to the database." });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="animate-spin text-primary w-12 h-12" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex bg-background">
-      <aside className="w-64 border-r border-white/5 bg-black/20 p-6 flex flex-col">
-        <div className="mb-10">
-          <h1 className="font-headline text-lg font-bold tracking-tighter">
-            ADMIN <span className="text-primary">PORTAL</span>
+    <div className="min-h-screen bg-[#050505] text-white p-6 md:p-12">
+      <div className="max-w-4xl mx-auto space-y-12">
+        <header className="flex justify-between items-center mb-12">
+          <h1 className="font-headline text-3xl font-bold tracking-tighter text-primary uppercase">
+            Founder Dashboard
           </h1>
-        </div>
+          <Button variant="outline" onClick={handleSignOut} className="gap-2 border-white/10 hover:bg-white/5">
+            <LogOut size={16} /> Logout
+          </Button>
+        </header>
 
-        <nav className="space-y-2 flex-1">
-          <button 
-            onClick={() => setActiveTab("overview")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === "overview" ? "bg-primary text-white" : "text-muted-foreground hover:bg-white/5"}`}
-          >
-            <LayoutDashboard size={20} /> Overview
-          </button>
-          <button 
-            onClick={() => setActiveTab("projects")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === "projects" ? "bg-primary text-white" : "text-muted-foreground hover:bg-white/5"}`}
-          >
-            <Briefcase size={20} /> Projects
-          </button>
-          <button 
-            onClick={() => setActiveTab("profile")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === "profile" ? "bg-primary text-white" : "text-muted-foreground hover:bg-white/5"}`}
-          >
-            <UserCircle size={20} /> Profile
-          </button>
-        </nav>
+        {/* Global Content Section */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-1 w-8 bg-primary rounded-full" />
+            <h2 className="font-headline text-xl font-bold uppercase tracking-tight">Manage Global Content</h2>
+          </div>
 
-        <button 
-          onClick={handleSignOut}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-destructive hover:bg-destructive/10 transition-all mt-auto"
-        >
-          <LogOut size={20} /> Sign Out
-        </button>
-      </aside>
+          {siteData && (
+            <Card className="bg-white/[0.02] border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+              <CardContent className="p-8 space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Founder Headline</Label>
+                  <Input 
+                    value={siteData.headline}
+                    onChange={(e) => setSiteData({ ...siteData, headline: e.target.value })}
+                    className="bg-black/20 border-white/5 focus:border-primary/50 rounded-xl h-12"
+                  />
+                </div>
 
-      <main className="flex-1 p-10 overflow-y-auto">
-        <div className="max-w-5xl mx-auto">
-          {activeTab === "overview" && (
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-3xl font-bold font-headline">Portfolio Status</h2>
-                <p className="text-muted-foreground">Monitoring active projects and system performance.</p>
-              </div>
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Profile Image</Label>
+                  <Input 
+                    value={siteData.profileImage}
+                    onChange={(e) => setSiteData({ ...siteData, profileImage: e.target.value })}
+                    className="bg-black/20 border-white/5 focus:border-primary/50 rounded-xl h-12"
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="text-muted-foreground text-sm mb-1">Live Projects</div>
-                    <div className="text-4xl font-headline font-bold">{projects.length}</div>
-                  </CardContent>
-                </Card>
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="text-muted-foreground text-sm mb-1">Last Update</div>
-                    <div className="text-xl font-headline font-bold">Today</div>
-                  </CardContent>
-                </Card>
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="text-muted-foreground text-sm mb-1">Database Mode</div>
-                    <div className="text-xl font-headline font-bold text-accent">REALTIME</div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "projects" && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold font-headline">Manage Projects</h2>
-                <Button className="gap-2" onClick={() => {
-                  setEditingProject({});
-                  setIsDialogOpen(true);
-                }}>
-                  <Plus size={18} /> New Project
-                </Button>
-              </div>
-
-              <div className="space-y-4">
-                {projectsLoading ? (
-                  <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>
-                ) : (
-                  projects.map((project) => (
-                    <div key={project.id} className="glass-card p-6 rounded-2xl flex items-center justify-between group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-lg bg-white/5 relative overflow-hidden">
-                          <img src={project.images[0]} alt="" className="object-cover w-full h-full" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold">{project.title}</h4>
-                          <p className="text-xs text-muted-foreground">{project.category}</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => {
-                          setEditingProject(project);
-                          setIsDialogOpen(true);
-                        }}>Edit</Button>
-                        <Button variant="destructive" size="icon" onClick={() => deleteProject(db, project.id)}><Trash2 size={16} /></Button>
-                      </div>
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Upload New Profile Image</Label>
+                  <div className="flex gap-4">
+                    <div className="flex-1 relative">
+                      <Input 
+                        type="file" 
+                        onChange={(e) => handleFileUpload(e, 'profile')}
+                        className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                      />
                     </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "profile" && (
-            <div className="space-y-8">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold font-headline">Site Configuration</h2>
-              </div>
-
-              {siteContent && (
-                <div className="glass-card p-8 rounded-2xl space-y-6">
-                  <div className="space-y-4">
-                    <Label>Headline</Label>
-                    <Input 
-                      value={siteContent.headline} 
-                      onChange={(e) => updateSiteContent(db, {...siteContent, headline: e.target.value})}
-                      className="bg-white/5 border-white/10"
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label>About Me</Label>
-                    <Textarea 
-                      value={siteContent.aboutMe} 
-                      onChange={(e) => updateSiteContent(db, {...siteContent, aboutMe: e.target.value})}
-                      className="bg-white/5 border-white/10 min-h-[150px]"
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label>Profile Image URL</Label>
-                    <Input 
-                      value={siteContent.profileImage}
-                      onChange={(e) => updateSiteContent(db, {...siteContent, profileImage: e.target.value})}
-                      className="bg-white/5 border-white/10"
-                    />
+                    <Button variant="secondary" className="h-12 px-6 rounded-xl gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-0">
+                      <Upload size={18} /> Upload Image
+                    </Button>
                   </div>
                 </div>
-              )}
-            </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">About Me</Label>
+                  <Textarea 
+                    value={siteData.aboutMe}
+                    onChange={(e) => setSiteData({ ...siteData, aboutMe: e.target.value })}
+                    className="bg-black/20 border-white/5 focus:border-primary/50 rounded-xl min-h-[150px] resize-none"
+                  />
+                </div>
+              </CardContent>
+            </Card>
           )}
-        </div>
-      </main>
+        </section>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="glass-card border-white/10 text-white max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="font-headline">{editingProject?.id ? 'Edit' : 'New'} Project</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSaveProject} className="space-y-4 pt-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Title</Label>
-                <Input 
-                  value={editingProject?.title || ""} 
-                  onChange={e => setEditingProject({...editingProject, title: e.target.value})}
-                  className="bg-white/5"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Select 
-                  value={editingProject?.category} 
-                  onValueChange={v => setEditingProject({...editingProject, category: v as any})}
+        {/* Projects Section */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-1 w-8 bg-primary rounded-full" />
+            <h2 className="font-headline text-xl font-bold uppercase tracking-tight">Manage Projects</h2>
+          </div>
+
+          <div className="space-y-8">
+            {projectsList.map((project, index) => (
+              <Card key={project.id} className="bg-white/[0.02] border-white/5 rounded-3xl overflow-hidden relative group shadow-2xl transition-all hover:border-white/10">
+                <button 
+                  onClick={() => removeProject(project.id)}
+                  className="absolute top-6 right-6 p-2 text-destructive hover:bg-destructive/10 rounded-full transition-colors z-10"
                 >
-                  <SelectTrigger className="bg-white/5">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Premium Web/App">Premium Web/App</SelectItem>
-                    <SelectItem value="Bots for Business">Bots for Business</SelectItem>
-                    <SelectItem value="AI Integration">AI Integration</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  <Trash2 size={20} />
+                </button>
+                <CardContent className="p-8 space-y-6">
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Title</Label>
+                    <Input 
+                      value={project.title}
+                      onChange={(e) => updateProject(project.id, { title: e.target.value })}
+                      placeholder="Project Name - e.g. GAINIPO"
+                      className="bg-black/20 border-white/5 rounded-xl h-12"
+                    />
+                  </div>
 
-            <div className="space-y-2">
-              <Label>Summary (Short)</Label>
-              <Input 
-                value={editingProject?.summary || ""} 
-                onChange={e => setEditingProject({...editingProject, summary: e.target.value})}
-                className="bg-white/5"
-              />
-            </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Description</Label>
+                    <Textarea 
+                      value={project.description}
+                      onChange={(e) => updateProject(project.id, { description: e.target.value })}
+                      className="bg-black/20 border-white/5 rounded-xl min-h-[100px] resize-none"
+                    />
+                  </div>
 
-            <div className="space-y-2">
-              <Label>Full Description</Label>
-              <Textarea 
-                value={editingProject?.description || ""} 
-                onChange={e => setEditingProject({...editingProject, description: e.target.value})}
-                className="bg-white/5 min-h-[100px]"
-              />
-            </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Category</Label>
+                      <Select 
+                        value={project.category} 
+                        onValueChange={(v) => updateProject(project.id, { category: v as any })}
+                      >
+                        <SelectTrigger className="bg-black/20 border-white/5 rounded-xl h-12">
+                          <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#0a0a0a] border-white/10 text-white">
+                          <SelectItem value="Social Media Automation">Social Media Automation</SelectItem>
+                          <SelectItem value="Premium Web App">Premium Web App</SelectItem>
+                          <SelectItem value="Bots for Business">Bots for Business</SelectItem>
+                          <SelectItem value="AI Integration">AI Integration</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-            <div className="space-y-2">
-              <Label>Tech Stack (Comma separated)</Label>
-              <Input 
-                value={editingProject?.techStack?.join(", ") || ""} 
-                onChange={e => setEditingProject({...editingProject, techStack: e.target.value.split(",").map(s => s.trim())})}
-                className="bg-white/5"
-              />
-            </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Tech Stack (comma separated)</Label>
+                      <Input 
+                        value={project.techStack.join(", ")}
+                        onChange={(e) => updateProject(project.id, { techStack: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
+                        placeholder="Python, Next.js, OpenAI..."
+                        className="bg-black/20 border-white/5 rounded-xl h-12"
+                      />
+                    </div>
+                  </div>
 
-            <div className="space-y-2">
-              <Label>Main Image URL</Label>
-              <Input 
-                value={editingProject?.images?.[0] || ""} 
-                onChange={e => setEditingProject({...editingProject, images: [e.target.value]})}
-                className="bg-white/5"
-              />
-            </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Image Path (comma separated URLs)</Label>
+                    <Textarea 
+                      value={project.images.join("\n")}
+                      onChange={(e) => updateProject(project.id, { images: e.target.value.split("\n").map(s => s.trim()).filter(Boolean) })}
+                      placeholder="Paste image URLs here (one per line)"
+                      className="bg-black/20 border-white/5 rounded-xl min-h-[80px] font-mono text-xs"
+                    />
+                  </div>
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-              <Button type="submit">Save Project</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Upload New Project Image</Label>
+                    <div className="flex gap-4">
+                      <Input 
+                        type="file" 
+                        onChange={(e) => handleFileUpload(e, 'project', project.id)}
+                        className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                      />
+                      <Button variant="secondary" className="h-12 px-6 rounded-xl gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-0">
+                        <Upload size={18} /> Upload Image
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Live Project URL (Optional)</Label>
+                      <Input 
+                        value={project.link || ""}
+                        onChange={(e) => updateProject(project.id, { link: e.target.value })}
+                        placeholder="https://example.com"
+                        className="bg-black/20 border-white/5 rounded-xl h-12"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Github URL (Optional)</Label>
+                      <Input 
+                        value={project.githubLink || ""}
+                        onChange={(e) => updateProject(project.id, { githubLink: e.target.value })}
+                        placeholder="https://github.com/..."
+                        className="bg-black/20 border-white/5 rounded-xl h-12"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Button 
+            onClick={addProject}
+            variant="outline" 
+            className="w-full h-16 rounded-[2rem] border-dashed border-white/10 hover:bg-white/5 hover:border-primary/50 transition-all font-headline tracking-tighter uppercase"
+          >
+            <Plus className="mr-2" size={20} /> Add New Project
+          </Button>
+        </section>
+
+        <footer className="pt-12 pb-24 border-t border-white/5">
+          <Button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="w-full h-16 rounded-3xl bg-primary hover:bg-primary/90 text-white font-headline text-lg tracking-tighter uppercase shadow-[0_0_40px_rgba(255,123,0,0.3)] transition-all hover:scale-[1.01]"
+          >
+            {isSaving ? <Loader2 className="animate-spin" /> : <><Save className="mr-2" /> Save All Changes</>}
+          </Button>
+        </footer>
+      </div>
     </div>
   );
 }

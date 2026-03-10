@@ -1,4 +1,3 @@
-
 import { 
   collection, 
   getDocs, 
@@ -10,20 +9,23 @@ import {
   query, 
   orderBy,
   serverTimestamp,
-  Firestore
+  Firestore,
+  writeBatch
 } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL, FirebaseStorage } from 'firebase/storage';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 export interface Project {
   id: string;
   title: string;
-  category: 'Premium Web/App' | 'Bots for Business' | 'AI Integration';
+  category: 'Premium Web App' | 'Bots for Business' | 'Social Media Automation' | 'AI Integration';
   description: string;
   summary: string;
   images: string[];
   techStack: string[];
   link?: string;
+  githubLink?: string;
   createdAt?: any;
 }
 
@@ -61,51 +63,57 @@ export const getSiteContent = async (db: Firestore): Promise<SiteContent> => {
   };
 };
 
-export const saveProject = (db: Firestore, project: Omit<Project, 'id'>, id?: string) => {
-  const data = {
-    ...project,
-    updatedAt: serverTimestamp(),
-    createdAt: id ? undefined : serverTimestamp()
-  };
+export async function uploadImage(storage: FirebaseStorage, file: File, path: string): Promise<string> {
+  const storageRef = ref(storage, path);
+  await uploadBytes(storageRef, file);
+  return getDownloadURL(storageRef);
+}
 
-  if (id) {
-    const docRef = doc(db, 'projects', id);
-    setDoc(docRef, data, { merge: true }).catch(async (error) => {
-      errorEmitter.emit('permission-error', new FirestorePermissionError({
-        path: docRef.path,
-        operation: 'update',
-        requestResourceData: data,
-      }));
-    });
-  } else {
-    const collRef = collection(db, 'projects');
-    addDoc(collRef, data).catch(async (error) => {
-      errorEmitter.emit('permission-error', new FirestorePermissionError({
-        path: collRef.path,
-        operation: 'create',
-        requestResourceData: data,
-      }));
-    });
-  }
-};
+export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, projects: Project[]) => {
+  const batch = writeBatch(db);
 
-export const deleteProject = (db: Firestore, id: string) => {
-  const docRef = doc(db, 'projects', id);
-  deleteDoc(docRef).catch(async (error) => {
+  // Save Site Content
+  const siteRef = doc(db, 'site', 'content');
+  batch.set(siteRef, siteContent, { merge: true });
+
+  // Handle Projects
+  // Note: For a robust system, we should track deleted projects too. 
+  // For this MVP, we'll update existing or add new ones.
+  projects.forEach((project) => {
+    const data = {
+      ...project,
+      updatedAt: serverTimestamp(),
+      createdAt: project.id.startsWith('temp-') ? serverTimestamp() : (project.createdAt || serverTimestamp())
+    };
+    
+    // If it's a new project (temp ID), create a new doc ref with auto ID
+    if (project.id.startsWith('temp-')) {
+      const newDocRef = doc(collection(db, 'projects'));
+      const { id, ...saveData } = data;
+      batch.set(newDocRef, saveData);
+    } else {
+      const docRef = doc(db, 'projects', project.id);
+      batch.set(docRef, data, { merge: true });
+    }
+  });
+
+  return batch.commit().catch(async (error) => {
     errorEmitter.emit('permission-error', new FirestorePermissionError({
-      path: docRef.path,
-      operation: 'delete',
+      path: 'multiple',
+      operation: 'write',
+      requestResourceData: { siteContent, projectsCount: projects.length },
     }));
+    throw error;
   });
 };
 
-export const updateSiteContent = (db: Firestore, content: SiteContent) => {
-  const docRef = doc(db, 'site', 'content');
-  setDoc(docRef, content, { merge: true }).catch(async (error) => {
+export const deleteProjectDoc = (db: Firestore, id: string) => {
+  if (id.startsWith('temp-')) return Promise.resolve();
+  const docRef = doc(db, 'projects', id);
+  return deleteDoc(docRef).catch(async (error) => {
     errorEmitter.emit('permission-error', new FirestorePermissionError({
       path: docRef.path,
-      operation: 'update',
-      requestResourceData: content,
+      operation: 'delete',
     }));
   });
 };
