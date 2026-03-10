@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -18,8 +17,20 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
   const categories = ["ALL", "PREMIUM WEB APPS", "ADVANCED WEB SCRAPING", "BOTS FOR BUSINESS", "AI AUTOMATION"];
   const [activeCategory, setActiveCategory] = useState("ALL");
 
+  // Priority mapping for categories when "ALL" is selected
+  const categoryPriority: Record<string, number> = {
+    "PREMIUM WEB APPS": 1,
+    "ADVANCED WEB SCRAPING": 2,
+    "BOTS FOR BUSINESS": 3,
+    "AI AUTOMATION": 4,
+  };
+
   const filteredProjects = activeCategory === "ALL" 
-    ? projects 
+    ? [...projects].sort((a, b) => {
+        const priorityA = categoryPriority[a.category.toUpperCase()] || 99;
+        const priorityB = categoryPriority[b.category.toUpperCase()] || 99;
+        return priorityA - priorityB;
+      })
     : projects.filter(p => p.category.toUpperCase() === activeCategory);
 
   return (

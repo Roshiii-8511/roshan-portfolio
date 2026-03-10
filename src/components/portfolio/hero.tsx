@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -22,7 +21,7 @@ export function Hero({ content }: { content: SiteContent }) {
             src={content.profileImage}
             alt="Roshan Singh"
             fill
-            className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+            className="object-cover transition-all duration-500"
             priority
             data-ai-hint="professional portrait"
           />
