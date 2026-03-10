@@ -15,29 +15,31 @@ import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 
 export function ProjectPortfolio({ projects }: { projects: Project[] }) {
-  const categories = ["All", "Premium Web/App", "Bots for Business", "AI Integration"];
-  const [activeCategory, setActiveCategory] = useState("All");
+  const categories = ["ALL", "AI INTEGRATION", "SOCIAL MEDIA AUTOMATION", "BOTS FOR BUSINESS"];
+  const [activeCategory, setActiveCategory] = useState("ALL");
 
-  const filteredProjects = activeCategory === "All" 
+  const filteredProjects = activeCategory === "ALL" 
     ? projects 
-    : projects.filter(p => p.category === activeCategory);
+    : projects.filter(p => p.category.toUpperCase() === activeCategory);
 
   return (
     <section className="py-24 px-4 max-w-7xl mx-auto" id="projects">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
-        <div>
-          <h2 className="font-headline text-3xl md:text-4xl font-bold mb-4">Project Portfolio</h2>
-          <div className="h-1 w-20 bg-accent rounded-full" />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
+        <div className="flex items-center gap-4">
+          <div className="bg-destructive text-destructive-foreground px-3 py-1 rounded-full text-[10px] font-bold tracking-tighter uppercase animate-pulse">
+            Phase II
+          </div>
+          <h2 className="font-headline text-4xl md:text-5xl font-bold tracking-tighter uppercase">Project Portfolio</h2>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap gap-2">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-full text-[10px] font-bold tracking-widest transition-all uppercase ${
                 activeCategory === cat
-                  ? "bg-primary text-white shadow-lg shadow-primary/20"
+                  ? "bg-primary text-white shadow-lg"
                   : "bg-white/5 hover:bg-white/10 text-muted-foreground"
               }`}
             >
@@ -59,8 +61,7 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.4 }}
-              className="glass-card rounded-2xl overflow-hidden group flex flex-col h-full"
+              className="glass-card rounded-[2rem] overflow-hidden group border-white/5"
             >
               <div className="relative aspect-video">
                 <Carousel 
@@ -86,37 +87,37 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
                     ))}
                   </CarouselContent>
                 </Carousel>
-                <div className="absolute top-4 left-4 z-10">
-                  <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
+                <div className="absolute top-6 left-6 z-10">
+                  <Badge variant="outline" className="bg-black/40 backdrop-blur-md border-white/10 text-[10px] font-bold">
                     {project.category}
                   </Badge>
                 </div>
               </div>
 
-              <div className="p-6 flex flex-col flex-1">
-                <h3 className="font-headline text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+              <div className="p-8">
+                <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight">
                   {project.title}
                 </h3>
-                <p className="text-muted-foreground text-sm line-clamp-3 mb-6 flex-1">
-                  {project.description}
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                  {project.summary}
                 </p>
                 
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex flex-wrap gap-2 mb-8">
                   {project.techStack.map(tech => (
-                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent border border-white/5">
-                      {tech}
+                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent/80">
+                      #{tech}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex items-center gap-4 mt-auto">
+                <div className="flex items-center gap-6">
                   {project.link && (
-                    <a href={project.link} target="_blank" className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-                      <ExternalLink size={16} /> Live Demo
+                    <a href={project.link} target="_blank" className="flex items-center gap-2 text-xs font-bold hover:text-primary transition-colors tracking-widest uppercase">
+                      <ExternalLink size={14} /> View Project
                     </a>
                   )}
-                  <a href="#" className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-                    <Github size={16} /> Source
+                  <a href="#" className="flex items-center gap-2 text-xs font-bold hover:text-primary transition-colors tracking-widest uppercase">
+                    <Github size={14} /> Repository
                   </a>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import { Expertise } from "@/components/portfolio/expertise";
 import { ProjectPortfolio } from "@/components/portfolio/project-portfolio";
 import { FounderProfile } from "@/components/portfolio/founder-profile";
 import { Footer } from "@/components/portfolio/footer";
+import { Navbar } from "@/components/portfolio/navbar";
 
 export default async function Home() {
   const [projects, siteContent] = await Promise.all([
@@ -14,6 +15,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen">
+      <Navbar />
       <Hero content={siteContent} />
       <Expertise />
       <ProjectPortfolio projects={projects} />

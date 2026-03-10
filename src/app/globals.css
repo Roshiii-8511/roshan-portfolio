@@ -1,29 +1,30 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
+    --background: 240 10% 2%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 10% 4%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 240 10% 2%;
     --popover-foreground: 0 0% 98%;
-    --primary: 29 100% 50%; /* Vibrant Orange #FF7B00 */
+    --primary: 29 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 100% 50%; /* Radiant Gold #FFD700 */
+    --secondary: 45 100% 50%;
     --secondary-foreground: 240 10% 3.9%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 188 100% 50%; /* Electric Cyan #00CFFF */
+    --accent: 188 100% 50%;
     --accent-foreground: 240 10% 3.9%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
+    --border: 240 3.7% 10%;
     --input: 240 3.7% 15.9%;
     --ring: 29 100% 50%;
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 }
 
@@ -33,18 +34,19 @@
   }
   body {
     @apply bg-background text-foreground font-body;
-    background: radial-gradient(circle at top center, hsl(240 10% 10%), hsl(240 10% 2%));
+    background-color: #050505;
+    background-image: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #050505 100%);
     min-height: 100vh;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-xl;
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.05] shadow-2xl;
   }
   
   .animate-spin-slow {
-    animation: spin 8s linear infinite;
+    animation: spin 12s linear infinite;
   }
   
   @keyframes spin {
@@ -53,11 +55,7 @@
   }
 
   .text-glow-orange {
-    text-shadow: 0 0 10px hsla(29, 100%, 50%, 0.5);
-  }
-
-  .text-glow-cyan {
-    text-shadow: 0 0 10px hsla(188, 100%, 50%, 0.5);
+    text-shadow: 0 0 20px hsla(29, 100%, 50%, 0.3);
   }
 }
 
