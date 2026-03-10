@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -20,7 +19,6 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
-  // Priority sorting: Premium Web Apps first
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -75,12 +73,12 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               whileHover={{ 
                 scale: 1.05, 
                 y: -15,
-                boxShadow: "0 50px 100px -20px rgba(0,0,0,0.8), 0 0 30px rgba(255, 123, 0, 0.3)",
-                borderColor: "hsla(29, 100%, 50%, 0.5)"
+                boxShadow: "0 50px 100px -20px rgba(0,0,0,0.8), 0 0 30px rgba(255, 123, 0, 0.4)",
+                borderColor: "hsla(29, 100%, 50%, 0.6)"
               }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 350, damping: 20 }}
-              className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300 bg-white/[0.02]"
+              className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300 bg-white/[0.02] relative"
             >
               <div className="relative aspect-video overflow-hidden">
                 {project.images && project.images.length > 0 ? (

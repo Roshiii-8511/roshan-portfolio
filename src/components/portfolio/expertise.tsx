@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -58,7 +57,7 @@ export function Expertise() {
               rotateX: 2,
               rotateY: 2,
               boxShadow: "0 40px 80px -20px rgba(255, 123, 0, 0.4)",
-              borderColor: "hsla(29, 100%, 50%, 0.5)",
+              borderColor: "hsla(29, 100%, 50%, 0.6)",
               backgroundColor: "rgba(255, 255, 255, 0.05)"
             }}
             transition={{ 

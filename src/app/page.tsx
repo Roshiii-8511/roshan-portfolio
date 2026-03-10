@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useFirestore, useCollection, useDoc, useMemoFirebase } from "@/firebase";
@@ -22,7 +21,6 @@ export default function Home() {
   const { data: projectsData, loading: projectsLoading } = useCollection<Project>(projectsQuery);
   
   const siteContentRef = useMemoFirebase(() => {
-    // Explicitly using the path defined in backend.json and security rules
     return doc(db, 'globalContent', 'main-config');
   }, [db]);
   

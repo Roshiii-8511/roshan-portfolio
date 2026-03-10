@@ -1,4 +1,3 @@
-
 import { 
   collection, 
   getDocs, 
@@ -99,7 +98,7 @@ export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, pr
 
   return batch.commit().catch(async (error) => {
     const permissionError = new FirestorePermissionError({
-      path: 'globalContent/main-config',
+      path: 'batch-save-portfolio',
       operation: 'write',
       requestResourceData: { siteContent, projectsCount: projects.length },
     } satisfies SecurityRuleContext);
