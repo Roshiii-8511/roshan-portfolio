@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -9,20 +8,19 @@ import {
   Plus,
   Upload,
   Save,
-  CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFirestore, useAuth, useFirebaseApp, useUser } from "@/firebase";
 import { Project, SiteContent, saveAllChanges, deleteProjectDoc, uploadImage, getSiteContent, getProjects } from "@/app/lib/db";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -31,6 +29,7 @@ export default function AdminDashboard() {
   const app = useFirebaseApp();
   const storage = getStorage(app);
   const { user, loading: authLoading } = useUser();
+  const { toast } = useToast();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,24 +37,34 @@ export default function AdminDashboard() {
   const [projectsList, setProjectsList] = useState<Project[]>([]);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
+    if (authLoading) return;
+
+    if (!user) {
+      router.replace("/login");
       return;
     }
 
-    if (user) {
-      async function loadData() {
+    async function loadData() {
+      try {
         const [content, projects] = await Promise.all([
           getSiteContent(db),
           getProjects(db)
         ]);
         setSiteData(content);
         setProjectsList(projects);
+      } catch (err) {
+        console.error("Data load error:", err);
+        toast({
+          variant: "destructive",
+          title: "Failed to load data",
+          description: "Check your database permissions.",
+        });
+      } finally {
         setIsLoading(false);
       }
-      loadData();
     }
-  }, [db, user, authLoading, router]);
+    loadData();
+  }, [db, user, authLoading, router, toast]);
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -79,9 +88,13 @@ export default function AdminDashboard() {
 
   const removeProject = async (id: string) => {
     if (confirm("Are you sure you want to delete this project?")) {
-      await deleteProjectDoc(db, id);
-      setProjectsList(projectsList.filter(p => p.id !== id));
-      toast({ title: "Project deleted", description: "The project has been removed from the database." });
+      try {
+        await deleteProjectDoc(db, id);
+        setProjectsList(projectsList.filter(p => p.id !== id));
+        toast({ title: "Project deleted" });
+      } catch (err) {
+        toast({ variant: "destructive", title: "Delete failed" });
+      }
     }
   };
 
@@ -105,9 +118,9 @@ export default function AdminDashboard() {
           updateProject(projectId, { images: [...project.images, url] });
         }
       }
-      toast({ title: "Upload successful", description: "Image has been uploaded and linked." });
+      toast({ title: "Upload successful" });
     } catch (error) {
-      toast({ variant: "destructive", title: "Upload failed", description: "There was an error uploading your image." });
+      toast({ variant: "destructive", title: "Upload failed" });
     }
   };
 
@@ -116,15 +129,15 @@ export default function AdminDashboard() {
     setIsSaving(true);
     try {
       await saveAllChanges(db, siteData, projectsList);
-      toast({ title: "Changes saved!", description: "Portfolio has been updated successfully." });
+      toast({ title: "Changes saved!" });
     } catch (error) {
-      toast({ variant: "destructive", title: "Save failed", description: "Could not save changes to the database." });
+      toast({ variant: "destructive", title: "Save failed" });
     } finally {
       setIsSaving(false);
     }
   };
 
-  if (authLoading || (isLoading && user)) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050505]">
         <Loader2 className="animate-spin text-primary w-12 h-12" />
@@ -166,7 +179,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Profile Image</Label>
+                  <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Profile Image URL</Label>
                   <Input 
                     value={siteData.profileImage}
                     onChange={(e) => setSiteData({ ...siteData, profileImage: e.target.value })}
@@ -176,18 +189,11 @@ export default function AdminDashboard() {
 
                 <div className="space-y-2">
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Upload New Profile Image</Label>
-                  <div className="flex gap-4">
-                    <div className="flex-1 relative">
-                      <Input 
-                        type="file" 
-                        onChange={(e) => handleFileUpload(e, 'profile')}
-                        className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                      />
-                    </div>
-                    <Button variant="secondary" className="h-12 px-6 rounded-xl gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-0">
-                      <Upload size={18} /> Upload Image
-                    </Button>
-                  </div>
+                  <Input 
+                    type="file" 
+                    onChange={(e) => handleFileUpload(e, 'profile')}
+                    className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -211,7 +217,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="space-y-8">
-            {projectsList.map((project, index) => (
+            {projectsList.map((project) => (
               <Card key={project.id} className="bg-white/[0.02] border-white/5 rounded-3xl overflow-hidden relative group shadow-2xl transition-all hover:border-white/10">
                 <button 
                   onClick={() => removeProject(project.id)}
@@ -225,17 +231,17 @@ export default function AdminDashboard() {
                     <Input 
                       value={project.title}
                       onChange={(e) => updateProject(project.id, { title: e.target.value })}
-                      placeholder="Project Name - e.g. GAINIPO"
+                      placeholder="Project Name"
                       className="bg-black/20 border-white/5 rounded-xl h-12"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Description</Label>
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Summary (Short)</Label>
                     <Textarea 
-                      value={project.description}
-                      onChange={(e) => updateProject(project.id, { description: e.target.value })}
-                      className="bg-black/20 border-white/5 rounded-xl min-h-[100px] resize-none"
+                      value={project.summary}
+                      onChange={(e) => updateProject(project.id, { summary: e.target.value })}
+                      className="bg-black/20 border-white/5 rounded-xl min-h-[80px] resize-none"
                     />
                   </div>
 
@@ -263,55 +269,19 @@ export default function AdminDashboard() {
                       <Input 
                         value={project.techStack.join(", ")}
                         onChange={(e) => updateProject(project.id, { techStack: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
-                        placeholder="Python, Next.js, OpenAI..."
+                        placeholder="Python, Next.js..."
                         className="bg-black/20 border-white/5 rounded-xl h-12"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Image Path (comma separated URLs)</Label>
-                    <Textarea 
-                      value={project.images.join("\n")}
-                      onChange={(e) => updateProject(project.id, { images: e.target.value.split("\n").map(s => s.trim()).filter(Boolean) })}
-                      placeholder="Paste image URLs here (one per line)"
-                      className="bg-black/20 border-white/5 rounded-xl min-h-[80px] font-mono text-xs"
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Upload Project Image</Label>
+                    <Input 
+                      type="file" 
+                      onChange={(e) => handleFileUpload(e, 'project', project.id)}
+                      className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                     />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Upload New Project Image</Label>
-                    <div className="flex gap-4">
-                      <Input 
-                        type="file" 
-                        onChange={(e) => handleFileUpload(e, 'project', project.id)}
-                        className="bg-black/20 border-white/5 rounded-xl h-12 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                      />
-                      <Button variant="secondary" className="h-12 px-6 rounded-xl gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-0">
-                        <Upload size={18} /> Upload Image
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Live Project URL (Optional)</Label>
-                      <Input 
-                        value={project.link || ""}
-                        onChange={(e) => updateProject(project.id, { link: e.target.value })}
-                        placeholder="https://example.com"
-                        className="bg-black/20 border-white/5 rounded-xl h-12"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Github URL (Optional)</Label>
-                      <Input 
-                        value={project.githubLink || ""}
-                        onChange={(e) => updateProject(project.id, { githubLink: e.target.value })}
-                        placeholder="https://github.com/..."
-                        className="bg-black/20 border-white/5 rounded-xl h-12"
-                      />
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -333,7 +303,7 @@ export default function AdminDashboard() {
             disabled={isSaving}
             className="w-full h-16 rounded-3xl bg-primary hover:bg-primary/90 text-white font-headline text-lg tracking-tighter uppercase shadow-[0_0_40px_rgba(255,123,0,0.3)] transition-all hover:scale-[1.01]"
           >
-            {isSaving ? <Loader2 className="animate-spin" /> : <><Save className="mr-2" /> Save All Changes</>}
+            {isSaving ? <Loader2 className="animate-spin" /> : <Save className="mr-2" />} Save All Changes
           </Button>
         </footer>
       </div>
