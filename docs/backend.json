@@ -1,0 +1,44 @@
+
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A portfolio project entry.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string", "enum": ["Premium Web/App", "Bots for Business", "AI Integration"] },
+        "description": { "type": "string" },
+        "summary": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "techStack": { "type": "array", "items": { "type": "string" } },
+        "link": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "category", "description", "summary", "images", "techStack"]
+    },
+    "SiteContent": {
+      "title": "Site Content",
+      "description": "Global website content and configuration.",
+      "type": "object",
+      "properties": {
+        "headline": { "type": "string" },
+        "aboutMe": { "type": "string" },
+        "profileImage": { "type": "string" }
+      }
+    }
+  },
+  "auth": {
+    "providers": ["password"]
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "#/backend/entities/Project",
+      "description": "Collection of portfolio projects."
+    },
+    "/site/content": {
+      "schema": "#/backend/entities/SiteContent",
+      "description": "Global site configuration document."
+    }
+  }
+}

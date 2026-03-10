@@ -4,24 +4,31 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock, User, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const auth = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple mock auth
-    if (email === "admin@roshan.ai" && password === "roshan123") {
+    setIsLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       router.push("/admin");
-    } else {
-      alert("Invalid credentials. Try admin@roshan.ai / roshan123");
+    } catch (error: any) {
+      alert("Auth Error: " + error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -37,7 +44,7 @@ export default function LoginPage() {
             <Lock className="text-primary" size={32} />
           </div>
           <h1 className="font-headline text-2xl font-bold">Founder Access</h1>
-          <p className="text-muted-foreground text-sm mt-2">Enter credentials to manage your portfolio.</p>
+          <p className="text-muted-foreground text-sm mt-2">Secure access for portfolio administration.</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -80,8 +87,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full h-12 font-headline group">
-            AUTHORIZE <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+          <Button type="submit" className="w-full h-12 font-headline group" disabled={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" /> : "AUTHORIZE"}
+            {!isLoading && <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />}
           </Button>
         </form>
 

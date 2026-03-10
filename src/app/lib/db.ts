@@ -1,4 +1,20 @@
 
+import { 
+  collection, 
+  getDocs, 
+  doc, 
+  getDoc, 
+  setDoc, 
+  addDoc, 
+  deleteDoc, 
+  query, 
+  orderBy,
+  serverTimestamp,
+  Firestore
+} from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+
 export interface Project {
   id: string;
   title: string;
@@ -8,6 +24,7 @@ export interface Project {
   images: string[];
   techStack: string[];
   link?: string;
+  createdAt?: any;
 }
 
 export interface SiteContent {
@@ -16,48 +33,79 @@ export interface SiteContent {
   profileImage: string;
 }
 
-const DEFAULT_PROJECTS: Project[] = [
-  {
-    id: '1',
-    title: 'Autonomous Social Manager',
-    category: 'Bots for Business',
-    description: 'A complete end-to-end social media automation system that uses AI to generate content, schedule posts, and interact with followers based on real-time sentiment analysis.',
-    summary: 'AI-driven social media growth engine.',
-    images: ['https://picsum.photos/seed/ai-auto-1/800/600', 'https://picsum.photos/seed/ai-auto-2/800/600'],
-    techStack: ['Python', 'OpenAI', 'Next.js', 'Firestore'],
-    link: 'https://github.com'
-  },
-  {
-    id: '2',
-    title: 'Market Intelligence Scraper',
-    category: 'Premium Web/App',
-    description: 'High-performance web scraping platform capable of extracting structured data from dynamic JavaScript-heavy websites at scale, featuring proxy rotation and anti-bot evasion.',
-    summary: 'Enterprise-grade data extraction platform.',
-    images: ['https://picsum.photos/seed/scraper-1/800/600'],
-    techStack: ['Node.js', 'Puppeteer', 'Redis', 'Docker'],
-  },
-  {
-    id: '3',
-    title: 'Strategic CRM Automation',
-    category: 'Bots for Business',
-    description: 'Workflow automation that bridges the gap between marketing leads and sales closing using intelligent lead scoring and automated personalized follow-ups.',
-    summary: 'Lead conversion optimization system.',
-    images: ['https://picsum.photos/seed/bot-1/800/600'],
-    techStack: ['Zapier', 'Make.com', 'Python', 'Airtable'],
+export const getProjects = async (db: Firestore): Promise<Project[]> => {
+  try {
+    const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
+  } catch (e) {
+    console.error("Error fetching projects:", e);
+    return [];
   }
-];
-
-const DEFAULT_CONTENT: SiteContent = {
-  headline: 'Architecting Autonomous AI Systems',
-  aboutMe: 'Bridging the gap between Computer Science precision and MBA strategic vision. I specialize in building robust automation frameworks that scale businesses through intelligent technology.',
-  profileImage: 'https://picsum.photos/seed/roshan/400/400'
 };
 
-// In a real app, these would fetch from Firestore
-export const getProjects = async (): Promise<Project[]> => {
-  return DEFAULT_PROJECTS;
+export const getSiteContent = async (db: Firestore): Promise<SiteContent> => {
+  try {
+    const docRef = doc(db, 'site', 'content');
+    const snapshot = await getDoc(docRef);
+    if (snapshot.exists()) {
+      return snapshot.data() as SiteContent;
+    }
+  } catch (e) {
+    console.error("Error fetching site content:", e);
+  }
+  return {
+    headline: 'Architecting Autonomous AI Systems',
+    aboutMe: 'Bridging the gap between Computer Science precision and MBA strategic vision.',
+    profileImage: 'https://picsum.photos/seed/roshan/400/400'
+  };
 };
 
-export const getSiteContent = async (): Promise<SiteContent> => {
-  return DEFAULT_CONTENT;
+export const saveProject = (db: Firestore, project: Omit<Project, 'id'>, id?: string) => {
+  const data = {
+    ...project,
+    updatedAt: serverTimestamp(),
+    createdAt: id ? undefined : serverTimestamp()
+  };
+
+  if (id) {
+    const docRef = doc(db, 'projects', id);
+    setDoc(docRef, data, { merge: true }).catch(async (error) => {
+      errorEmitter.emit('permission-error', new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'update',
+        requestResourceData: data,
+      }));
+    });
+  } else {
+    const collRef = collection(db, 'projects');
+    addDoc(collRef, data).catch(async (error) => {
+      errorEmitter.emit('permission-error', new FirestorePermissionError({
+        path: collRef.path,
+        operation: 'create',
+        requestResourceData: data,
+      }));
+    });
+  }
+};
+
+export const deleteProject = (db: Firestore, id: string) => {
+  const docRef = doc(db, 'projects', id);
+  deleteDoc(docRef).catch(async (error) => {
+    errorEmitter.emit('permission-error', new FirestorePermissionError({
+      path: docRef.path,
+      operation: 'delete',
+    }));
+  });
+};
+
+export const updateSiteContent = (db: Firestore, content: SiteContent) => {
+  const docRef = doc(db, 'site', 'content');
+  setDoc(docRef, content, { merge: true }).catch(async (error) => {
+    errorEmitter.emit('permission-error', new FirestorePermissionError({
+      path: docRef.path,
+      operation: 'update',
+      requestResourceData: content,
+    }));
+  });
 };

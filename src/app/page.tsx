@@ -1,25 +1,54 @@
+"use client";
 
-import { getProjects, getSiteContent } from "@/app/lib/db";
+import { useFirestore, useCollection, useDoc, useMemoFirebase } from "@/firebase";
 import { Hero } from "@/components/portfolio/hero";
 import { Expertise } from "@/components/portfolio/expertise";
 import { ProjectPortfolio } from "@/components/portfolio/project-portfolio";
 import { FounderProfile } from "@/components/portfolio/founder-profile";
 import { Footer } from "@/components/portfolio/footer";
 import { Navbar } from "@/components/portfolio/navbar";
+import { Project, SiteContent } from "@/app/lib/db";
+import { collection, query, orderBy, doc } from "firebase/firestore";
+import { Loader2 } from "lucide-react";
 
-export default async function Home() {
-  const [projects, siteContent] = await Promise.all([
-    getProjects(),
-    getSiteContent()
-  ]);
+export default function Home() {
+  const db = useFirestore();
+  
+  const projectsQuery = useMemoFirebase(() => {
+    return query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+  }, [db]);
+  
+  const { data: projects = [], loading: projectsLoading } = useCollection<Project>(projectsQuery);
+  
+  const siteContentRef = useMemoFirebase(() => {
+    return doc(db, 'site', 'content');
+  }, [db]);
+  
+  const { data: siteContent, loading: contentLoading } = useDoc<SiteContent>(siteContentRef);
+
+  const fallbackContent: SiteContent = {
+    headline: 'Architecting Autonomous AI Systems',
+    aboutMe: 'Bridging the gap between Computer Science precision and MBA strategic vision. I specialize in building robust automation frameworks that scale businesses through intelligent technology.',
+    profileImage: 'https://picsum.photos/seed/roshan/400/400'
+  };
+
+  const displayContent = siteContent || fallbackContent;
+
+  if (projectsLoading && contentLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="animate-spin text-primary w-12 h-12" />
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen">
       <Navbar />
-      <Hero content={siteContent} />
+      <Hero content={displayContent} />
       <Expertise />
       <ProjectPortfolio projects={projects} />
-      <FounderProfile content={siteContent} />
+      <FounderProfile content={displayContent} />
       <Footer />
     </main>
   );

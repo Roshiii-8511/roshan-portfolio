@@ -1,29 +1,33 @@
-
 "use client";
 
-import { motion, useInView, useMotionValue, animate } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { SiteContent } from "@/app/lib/db";
 import { Briefcase, TrendingUp, Code2, BrainCircuit } from "lucide-react";
 
 function Counter({ value, suffix, duration = 2 }: { value: number; suffix: string; duration?: number }) {
   const [displayValue, setDisplayValue] = useState(0);
-  const count = useMotionValue(0);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   useEffect(() => {
     if (inView) {
-      const controls = animate(count, value, {
-        duration,
-        ease: "easeOut",
-        onUpdate: (latest) => {
-          setDisplayValue(Math.round(latest));
-        },
-      });
-      return controls.stop;
+      let start = 0;
+      const end = value;
+      if (start === end) return;
+
+      const totalMiliseconds = duration * 1000;
+      const incrementTime = totalMiliseconds / end;
+
+      const timer = setInterval(() => {
+        start += 1;
+        setDisplayValue(start);
+        if (start === end) clearInterval(timer);
+      }, incrementTime);
+
+      return () => clearInterval(timer);
     }
-  }, [inView, value, count, duration]);
+  }, [inView, value, duration]);
 
   return <span ref={ref}>{displayValue}{suffix}</span>;
 }
