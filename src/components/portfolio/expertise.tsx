@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -51,6 +50,7 @@ export function Expertise() {
             key={index}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             whileHover={{ 
               scale: 1.05, 
               y: -12,
@@ -58,7 +58,6 @@ export function Expertise() {
               borderColor: "hsla(29, 100%, 50%, 0.4)",
               backgroundColor: "rgba(255, 255, 255, 0.05)"
             }}
-            viewport={{ once: true }}
             transition={{ 
               type: "spring", 
               stiffness: 400, 

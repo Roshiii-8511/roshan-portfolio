@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -68,7 +67,7 @@ export function Footer() {
       </div>
       
       <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-muted-foreground font-code uppercase tracking-widest">
-        <div>&copy; {year || "..."} ROSHAN SINGH — POWERED BY THE FUTURE</div>
+        <div>&copy; {year || 2024} ROSHAN SINGH — POWERED BY THE FUTURE</div>
         <div className="flex gap-8">
           <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
           <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

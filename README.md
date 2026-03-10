@@ -6,7 +6,7 @@ This is a NextJS 15 portfolio site built with React, Tailwind CSS, and Firebase.
 
 If the "Publish" button in Firebase Studio fails with "Something went wrong creating your App Hosting rollout", please check the following:
 
-### 1. Check Project Billing
+### 1. Check Project Billing (MOST IMPORTANT)
 App Hosting requires your Firebase project to be on the **Blaze Plan (Pay-as-you-go)**. 
 - Go to the [Firebase Console Billing Section](https://console.firebase.google.com/project/_/usage/details) to verify.
 

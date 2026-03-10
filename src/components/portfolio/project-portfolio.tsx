@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -18,7 +17,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
   const categories = ["ALL", "PREMIUM WEB APPS", "ADVANCED WEB SCRAPING", "BOTS FOR BUSINESS", "AI AUTOMATION"];
   const [activeCategory, setActiveCategory] = useState("ALL");
 
-  const safeProjects = projects || [];
+  const safeProjects = Array.isArray(projects) ? projects : [];
 
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
@@ -29,12 +28,12 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const filteredProjects = activeCategory === "ALL" 
     ? [...safeProjects].sort((a, b) => {
-        const priorityA = categoryPriority[a.category.toUpperCase()] || 99;
-        const priorityB = categoryPriority[b.category.toUpperCase()] || 99;
+        const priorityA = categoryPriority[a.category?.toUpperCase() || ""] || 99;
+        const priorityB = categoryPriority[b.category?.toUpperCase() || ""] || 99;
         if (priorityA !== priorityB) return priorityA - priorityB;
         return 0;
       })
-    : safeProjects.filter(p => p.category.toUpperCase() === activeCategory);
+    : safeProjects.filter(p => p.category?.toUpperCase() === activeCategory);
 
   return (
     <section className="py-24 px-4 max-w-7xl mx-auto" id="projects">
@@ -128,7 +127,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                 </p>
                 
                 <div className="flex flex-wrap gap-2 mb-8">
-                  {project.techStack.map(tech => (
+                  {project.techStack?.map(tech => (
                     <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent/80 transition-colors group-hover:bg-accent/10">
                       #{tech}
                     </span>
@@ -137,7 +136,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
                 <div className="flex items-center gap-6">
                   {project.link && (
-                    <a href={project.link} target="_blank" className="flex items-center gap-2 text-xs font-bold hover:text-primary transition-colors tracking-widest uppercase">
+                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-bold hover:text-primary transition-colors tracking-widest uppercase">
                       <ExternalLink size={14} /> View Project
                     </a>
                   )}
