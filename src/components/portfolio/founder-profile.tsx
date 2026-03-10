@@ -1,11 +1,41 @@
 
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView, useMotionValue, animate } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { SiteContent } from "@/app/lib/db";
 import { Briefcase, TrendingUp, Code2, BrainCircuit } from "lucide-react";
 
+function Counter({ value, suffix, duration = 2 }: { value: number; suffix: string; duration?: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const count = useMotionValue(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
+
+  useEffect(() => {
+    if (inView) {
+      const controls = animate(count, value, {
+        duration,
+        ease: "easeOut",
+        onUpdate: (latest) => {
+          setDisplayValue(Math.round(latest));
+        },
+      });
+      return controls.stop;
+    }
+  }, [inView, value, count, duration]);
+
+  return <span ref={ref}>{displayValue}{suffix}</span>;
+}
+
 export function FounderProfile({ content }: { content: SiteContent }) {
+  const stats = [
+    { icon: Code2, target: 50, suffix: "+", label: "BOTS BUILT", desc: "Successfully deployed autonomous agents for diverse use cases." },
+    { icon: Briefcase, target: 2, suffix: "+", label: "YEARS EXPERIENCE", desc: "Of crafting complex business programs through code." },
+    { icon: TrendingUp, target: 400, suffix: "%", label: "REVENUE INCREASE", desc: "Average efficiency gain through automation pipelines." },
+    { icon: BrainCircuit, target: 1, suffix: "M+", label: "DATA POINTS", desc: "Processed daily through high-performance crawlers." },
+  ];
+
   return (
     <section className="py-24 px-4 max-w-7xl mx-auto" id="about">
       {/* Strategy Section */}
@@ -20,22 +50,19 @@ export function FounderProfile({ content }: { content: SiteContent }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { icon: Code2, value: "50+", label: "BOTS BUILT", desc: "Successfully deployed autonomous agents for diverse use cases." },
-            { icon: Briefcase, value: "5+", label: "YEARS EXPERIENCE", desc: "Of crafting complex business programs through code." },
-            { icon: TrendingUp, value: "400%", label: "REVENUE INCREASE", desc: "Average efficiency gain through automation pipelines." },
-            { icon: BrainCircuit, value: "1M+", label: "DATA POINTS", desc: "Processed daily through high-performance crawlers." },
-          ].map((stat, i) => (
+          {stats.map((stat, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass-card p-8 rounded-3xl flex flex-col items-start"
+              className="glass-card p-8 rounded-3xl flex flex-col items-start border-white/5 hover:border-primary/20 transition-colors"
             >
               <stat.icon className="text-primary mb-6" size={32} />
-              <div className="font-headline text-3xl font-bold mb-1">{stat.value}</div>
+              <div className="font-headline text-3xl font-bold mb-1">
+                <Counter value={stat.target} suffix={stat.suffix} />
+              </div>
               <div className="text-primary text-[10px] font-bold tracking-[0.2em] mb-4 uppercase">{stat.label}</div>
               <p className="text-muted-foreground text-xs leading-relaxed">{stat.desc}</p>
             </motion.div>
