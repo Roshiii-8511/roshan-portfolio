@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -68,10 +69,17 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
               layout
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ 
+                scale: 1.02, 
+                y: -10,
+                boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+                borderColor: "hsla(29, 100%, 50%, 0.2)"
+              }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-card rounded-[2rem] overflow-hidden group border-white/5"
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="glass-card rounded-[2rem] overflow-hidden group border-white/5 cursor-pointer"
             >
-              <div className="relative aspect-video">
+              <div className="relative aspect-video overflow-hidden">
                 {project.images && project.images.length > 0 ? (
                   <Carousel 
                     className="w-full h-full"
@@ -90,7 +98,7 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
                               src={img}
                               alt={`${project.title} - image ${i + 1}`}
                               fill
-                              className="object-cover"
+                              className="object-cover transition-transform duration-700 group-hover:scale-110"
                             />
                           </div>
                         </CarouselItem>
@@ -119,7 +127,7 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
                 
                 <div className="flex flex-wrap gap-2 mb-8">
                   {project.techStack.map(tech => (
-                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent/80">
+                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent/80 transition-colors group-hover:bg-accent/10">
                       #{tech}
                     </span>
                   ))}

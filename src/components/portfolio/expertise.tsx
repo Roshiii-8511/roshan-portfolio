@@ -51,14 +51,25 @@ export function Expertise() {
             key={index}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ 
+              scale: 1.05, 
+              y: -10,
+              boxShadow: "0 20px 40px rgba(255,123,0,0.15)",
+              borderColor: "hsla(29, 100%, 50%, 0.3)"
+            }}
             viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
-            className="glass-card p-8 rounded-3xl border-white/5 hover:border-primary/20 transition-colors group"
+            transition={{ 
+              type: "spring", 
+              stiffness: 300, 
+              damping: 20,
+              delay: index * 0.1 
+            }}
+            className="glass-card p-8 rounded-3xl border-white/5 transition-colors group cursor-default"
           >
-            <div className={`mb-6 ${item.color}`}>
+            <div className={`mb-6 ${item.color} group-hover:scale-110 transition-transform duration-300`}>
               <item.icon size={32} />
             </div>
-            <h3 className="font-headline text-xl font-bold mb-4">{item.title}</h3>
+            <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors">{item.title}</h3>
             <p className="text-muted-foreground leading-relaxed text-sm">
               {item.description}
             </p>
