@@ -139,7 +139,7 @@ export default function AdminDashboard() {
       const url = await uploadImage(storage, file, path);
       
       if (type === 'profile' && siteData) {
-        setSiteData({ ...siteData, profileImage: url });
+        setSiteData({ ...siteData, profileImageUrl: url });
         setProfileFile(null);
       } else if (type === 'project' && projectId) {
         const project = projectsList.find(p => p.id === projectId);
@@ -155,11 +155,7 @@ export default function AdminDashboard() {
       toast({ title: "Upload successful" });
     } catch (error: any) {
       console.error("UPLOAD ERROR:", error);
-      let errorMessage = error.message || "Unknown storage error.";
-      if (error.code === 'storage/unauthorized') {
-        errorMessage = "Permission Denied: Please update your Firebase Storage rules to allow authenticated writes.";
-      }
-      toast({ variant: "destructive", title: "Upload failed", description: errorMessage });
+      toast({ variant: "destructive", title: "Upload failed" });
     } finally {
       setIsUploading(null);
     }
@@ -173,11 +169,7 @@ export default function AdminDashboard() {
       toast({ title: "Changes saved!" });
     } catch (error: any) {
       console.error("Save Error:", error);
-      let desc = "Check your Firestore rules in Firebase Console.";
-      if (error.code === 'permission-denied') {
-        desc = "Firestore Error: Permission Denied. Ensure your Firestore rules allow 'write' for authenticated users.";
-      }
-      toast({ variant: "destructive", title: "Save failed", description: desc });
+      toast({ variant: "destructive", title: "Save failed" });
     } finally {
       setIsSaving(false);
     }
@@ -230,7 +222,7 @@ export default function AdminDashboard() {
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Profile Image Management</Label>
                   <div className="flex items-center gap-4">
                     <div className="relative w-16 h-16 rounded-full overflow-hidden border border-white/10 bg-black/40">
-                      <img src={siteData.profileImage} alt="Profile" className="object-cover w-full h-full" />
+                      <img src={siteData.profileImageUrl} alt="Profile" className="object-cover w-full h-full" />
                     </div>
                     <div className="flex-1 space-y-2">
                       <div className="flex gap-2">
@@ -255,8 +247,8 @@ export default function AdminDashboard() {
                 <div className="space-y-2 pt-4 border-t border-white/5">
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">About Me</Label>
                   <Textarea 
-                    value={siteData.aboutMe}
-                    onChange={(e) => setSiteData({ ...siteData, aboutMe: e.target.value })}
+                    value={siteData.aboutMeContent}
+                    onChange={(e) => setSiteData({ ...siteData, aboutMeContent: e.target.value })}
                     className="bg-black/20 border-white/5 focus:border-primary/50 rounded-xl min-h-[150px] resize-none"
                   />
                 </div>

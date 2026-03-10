@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -19,6 +20,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
+  // Priority sorting: Premium Web Apps first
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -71,13 +73,13 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
-                scale: 1.04, 
-                y: -10,
-                boxShadow: "0 30px 60px -15px rgba(0,0,0,0.6), 0 0 20px rgba(255, 123, 0, 0.15)",
-                borderColor: "hsla(29, 100%, 50%, 0.3)"
+                scale: 1.05, 
+                y: -15,
+                boxShadow: "0 40px 80px -20px rgba(0,0,0,0.7), 0 0 30px rgba(255, 123, 0, 0.25)",
+                borderColor: "hsla(29, 100%, 50%, 0.4)"
               }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 18 }}
               className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300"
             >
               <div className="relative aspect-video overflow-hidden">
@@ -99,7 +101,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                               src={img}
                               alt={`${project.title} - image ${i + 1}`}
                               fill
-                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              className="object-cover transition-transform duration-1000 group-hover:scale-110"
                             />
                           </div>
                         </CarouselItem>
@@ -128,7 +130,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                 
                 <div className="flex flex-wrap gap-2 mb-8">
                   {project.techStack?.map(tech => (
-                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent/80 transition-colors group-hover:bg-accent/10">
+                    <span key={tech} className="text-[10px] font-code px-2 py-1 rounded bg-white/5 text-accent/80 transition-colors group-hover:bg-accent/15">
                       #{tech}
                     </span>
                   ))}

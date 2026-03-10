@@ -22,15 +22,17 @@ export default function Home() {
   const { data: projectsData, loading: projectsLoading } = useCollection<Project>(projectsQuery);
   
   const siteContentRef = useMemoFirebase(() => {
-    return doc(db, 'site', 'content');
+    // Corrected path to match backend.json and security rules
+    return doc(db, 'globalContent', 'main-config');
   }, [db]);
   
   const { data: siteContent, loading: contentLoading } = useDoc<SiteContent>(siteContentRef);
 
   const fallbackContent: SiteContent = {
     headline: 'Architecting Autonomous AI Systems',
-    aboutMe: 'Bridging the gap between Computer Science precision and MBA strategic vision. I specialize in building robust automation frameworks that scale businesses through intelligent technology.',
-    profileImage: 'https://picsum.photos/seed/roshan/400/400'
+    aboutMeContent: 'Bridging the gap between Computer Science precision and MBA strategic vision. I specialize in building robust automation frameworks that scale businesses through intelligent technology.',
+    profileImageUrl: 'https://picsum.photos/seed/roshan/400/400',
+    contactEmail: 'raushanar123@gmail.com'
   };
 
   const displayContent = siteContent || fallbackContent;

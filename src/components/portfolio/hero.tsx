@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -18,7 +19,7 @@ export function Hero({ content }: { content: SiteContent }) {
       >
         <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-primary/30 shadow-[0_0_30px_rgba(255,123,0,0.2)]">
           <Image
-            src={content.profileImage}
+            src={content.profileImageUrl}
             alt="Roshan Singh"
             fill
             className="object-cover transition-all duration-500"

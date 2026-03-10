@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -52,22 +53,22 @@ export function Expertise() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ 
-              scale: 1.03, 
-              y: -8,
-              boxShadow: "0 20px 40px -12px rgba(255, 123, 0, 0.3)",
-              borderColor: "hsla(29, 100%, 50%, 0.3)",
-              backgroundColor: "rgba(255, 255, 255, 0.04)"
+              scale: 1.05, 
+              y: -12,
+              boxShadow: "0 25px 50px -12px rgba(255, 123, 0, 0.4)",
+              borderColor: "hsla(29, 100%, 50%, 0.4)",
+              backgroundColor: "rgba(255, 255, 255, 0.05)"
             }}
             transition={{ 
               type: "spring", 
-              stiffness: 300, 
-              damping: 20,
+              stiffness: 400, 
+              damping: 17,
               delay: index * 0.05 
             }}
             className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default"
           >
-            <div className={`mb-6 ${item.color} group-hover:scale-110 transition-transform duration-300`}>
-              <item.icon size={32} />
+            <div className={`mb-6 ${item.color} group-hover:scale-125 transition-transform duration-300 ease-out`}>
+              <item.icon size={36} />
             </div>
             <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors">{item.title}</h3>
             <p className="text-muted-foreground leading-relaxed text-sm">

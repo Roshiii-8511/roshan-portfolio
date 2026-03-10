@@ -30,8 +30,9 @@ export interface Project {
 
 export interface SiteContent {
   headline: string;
-  aboutMe: string;
-  profileImage: string;
+  aboutMeContent: string;
+  profileImageUrl: string;
+  contactEmail: string;
 }
 
 export const getProjects = async (db: Firestore): Promise<Project[]> => {
@@ -57,8 +58,9 @@ export const getSiteContent = async (db: Firestore): Promise<SiteContent> => {
   }
   return {
     headline: 'Architecting Autonomous AI Systems',
-    aboutMe: 'Bridging the gap between Computer Science precision and MBA strategic vision.',
-    profileImage: 'https://picsum.photos/seed/roshan/400/400'
+    aboutMeContent: 'Bridging the gap between Computer Science precision and MBA strategic vision.',
+    profileImageUrl: 'https://picsum.photos/seed/roshan/400/400',
+    contactEmail: 'raushanar123@gmail.com'
   };
 };
 
@@ -71,11 +73,9 @@ export async function uploadImage(storage: FirebaseStorage, file: File, path: st
 export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, projects: Project[]) => {
   const batch = writeBatch(db);
 
-  // Save Site Content (using the correct path from backend.json)
   const siteRef = doc(db, 'globalContent', 'main-config');
-  batch.set(siteRef, siteContent, { merge: true });
+  batch.set(siteRef, { ...siteContent, id: 'main-config' }, { merge: true });
 
-  // Handle Projects
   projects.forEach((project) => {
     const data = {
       ...project,
