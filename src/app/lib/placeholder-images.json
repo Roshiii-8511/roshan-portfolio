@@ -1,0 +1,35 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "profile-pic",
+      "description": "Roshan Singh Professional Portrait",
+      "imageUrl": "https://picsum.photos/seed/roshan/400/400",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "project-1-1",
+      "description": "AI Automation Platform Screenshot 1",
+      "imageUrl": "https://picsum.photos/seed/ai-auto-1/800/600",
+      "imageHint": "artificial intelligence"
+    },
+    {
+      "id": "project-1-2",
+      "description": "AI Automation Platform Screenshot 2",
+      "imageUrl": "https://picsum.photos/seed/ai-auto-2/800/600",
+      "imageHint": "dashboard software"
+    },
+    {
+      "id": "project-2-1",
+      "description": "Web Scraper Tool Screenshot 1",
+      "imageUrl": "https://picsum.photos/seed/scraper-1/800/600",
+      "imageHint": "web code"
+    },
+    {
+      "id": "project-3-1",
+      "description": "Business Bot Integration Screenshot 1",
+      "imageUrl": "https://picsum.photos/seed/bot-1/800/600",
+      "imageHint": "robot automation"
+    }
+  ]
+}
