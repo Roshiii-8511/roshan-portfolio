@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -64,7 +63,7 @@ export function Expertise() {
               damping: 20,
               delay: index * 0.1 
             }}
-            className="glass-card p-8 rounded-3xl border-white/5 transition-colors group cursor-default"
+            className="glass-card p-8 rounded-3xl border-white/5 transition-all group cursor-default"
           >
             <div className={`mb-6 ${item.color} group-hover:scale-110 transition-transform duration-300`}>
               <item.icon size={32} />

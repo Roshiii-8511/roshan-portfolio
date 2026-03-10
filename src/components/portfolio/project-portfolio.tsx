@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -70,14 +69,14 @@ export function ProjectPortfolio({ projects }: { projects: Project[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
-                scale: 1.02, 
+                scale: 1.05, 
                 y: -10,
-                boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-                borderColor: "hsla(29, 100%, 50%, 0.2)"
+                boxShadow: "0 30px 60px rgba(0,0,0,0.5)",
+                borderColor: "hsla(29, 100%, 50%, 0.3)"
               }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="glass-card rounded-[2rem] overflow-hidden group border-white/5 cursor-pointer"
+              className="glass-card rounded-[2rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300"
             >
               <div className="relative aspect-video overflow-hidden">
                 {project.images && project.images.length > 0 ? (
