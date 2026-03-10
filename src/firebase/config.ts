@@ -1,9 +1,9 @@
 
 export const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "roshan-portfolio.firebaseapp.com",
-  projectId: "roshan-portfolio",
-  storageBucket: "roshan-portfolio.appspot.com",
+  apiKey: "AIzaSy...", // This will be provided by your Firebase console
+  authDomain: "portfolio-abc19.firebaseapp.com",
+  projectId: "portfolio-abc19",
+  storageBucket: "portfolio-abc19.appspot.com",
   messagingSenderId: "123456789",
   appId: "1:123456789:web:abcdef"
 };
