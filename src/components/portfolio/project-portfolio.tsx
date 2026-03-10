@@ -33,6 +33,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
         const priorityA = categoryPriority[a.category?.toUpperCase() || ""] || 99;
         const priorityB = categoryPriority[b.category?.toUpperCase() || ""] || 99;
         if (priorityA !== priorityB) return priorityA - priorityB;
+        // Secondary sort by date
         return 0;
       })
     : safeProjects.filter(p => p.category?.toUpperCase() === activeCategory);

@@ -22,7 +22,7 @@ export default function Home() {
   const { data: projectsData, loading: projectsLoading } = useCollection<Project>(projectsQuery);
   
   const siteContentRef = useMemoFirebase(() => {
-    // Corrected path to match backend.json and security rules
+    // Explicitly using the path defined in backend.json and security rules
     return doc(db, 'globalContent', 'main-config');
   }, [db]);
   

@@ -14,8 +14,9 @@ export function Hero({ content }: { content: SiteContent }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative mb-12"
+        whileHover={{ scale: 1.05, rotate: 2 }}
+        transition={{ duration: 0.8, type: "spring" }}
+        className="relative mb-12 cursor-pointer"
       >
         <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-primary/30 shadow-[0_0_30px_rgba(255,123,0,0.2)]">
           <Image
