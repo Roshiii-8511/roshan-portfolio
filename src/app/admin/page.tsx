@@ -98,7 +98,6 @@ export default function AdminDashboard() {
         setProjectsList(projectsList.filter(p => p.id !== id));
         toast({ title: "Project deleted" });
       } catch (err) {
-        // Detailed error already handled by emitter
         toast({ variant: "destructive", title: "Delete failed" });
       }
     }
@@ -155,17 +154,11 @@ export default function AdminDashboard() {
       toast({ title: "Upload successful" });
     } catch (error: any) {
       console.error("UPLOAD ERROR:", error);
-      
       let errorMessage = error.message || "Unknown storage error.";
       if (error.code === 'storage/unauthorized') {
         errorMessage = "Permission Denied: Please update your Firebase Storage rules to allow authenticated writes.";
       }
-
-      toast({ 
-        variant: "destructive", 
-        title: "Upload failed", 
-        description: errorMessage 
-      });
+      toast({ variant: "destructive", title: "Upload failed", description: errorMessage });
     } finally {
       setIsUploading(null);
     }
@@ -183,11 +176,7 @@ export default function AdminDashboard() {
       if (error.code === 'permission-denied') {
         desc = "Firestore Error: Permission Denied. Ensure your Firestore rules allow 'write' for authenticated users.";
       }
-      toast({ 
-        variant: "destructive", 
-        title: "Save failed", 
-        description: desc
-      });
+      toast({ variant: "destructive", title: "Save failed", description: desc });
     } finally {
       setIsSaving(false);
     }
@@ -332,9 +321,16 @@ export default function AdminDashboard() {
                     <div className="space-y-2">
                       <Label className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Tech Stack (comma separated)</Label>
                       <Input 
-                        value={project.techStack.join(", ")}
-                        onChange={(e) => updateProject(project.id, { techStack: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
-                        placeholder="Python, Next.js..."
+                        key={`${project.id}-tech`}
+                        defaultValue={project.techStack.join(", ")}
+                        onBlur={(e) => {
+                          const techStack = e.target.value
+                            .split(",")
+                            .map(s => s.trim())
+                            .filter(Boolean);
+                          updateProject(project.id, { techStack });
+                        }}
+                        placeholder="Python, Next.js, Firebase..."
                         className="bg-black/20 border-white/5 rounded-xl h-12"
                       />
                     </div>
