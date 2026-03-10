@@ -1,12 +1,11 @@
+
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { 
   LayoutDashboard, 
   Briefcase, 
   UserCircle, 
-  Wand2, 
   Plus, 
   Trash2, 
   LogOut,
@@ -21,7 +20,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFirestore, useAuth, useCollection, useDoc, useMemoFirebase } from "@/firebase";
 import { Project, SiteContent, saveProject, deleteProject, updateSiteContent } from "@/app/lib/db";
-import { generateProjectDescription } from "@/ai/flows/generate-project-description";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { collection, query, orderBy, doc } from "firebase/firestore";
@@ -44,13 +42,8 @@ export default function AdminDashboard() {
   
   const { data: siteContent } = useDoc<SiteContent>(siteContentRef);
 
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
-  
-  const [technicalNotes, setTechnicalNotes] = useState("");
-  const [bulletPoints, setBulletPoints] = useState("");
-  const [aiResult, setAiResult] = useState<{description: string, summary: string} | null>(null);
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -73,21 +66,6 @@ export default function AdminDashboard() {
     
     setIsDialogOpen(false);
     setEditingProject(null);
-  };
-
-  const handleAiGenerate = async () => {
-    setIsGenerating(true);
-    try {
-      const result = await generateProjectDescription({
-        technicalNotes,
-        bulletPoints: bulletPoints.split('\n').filter(p => p.trim() !== '')
-      });
-      setAiResult(result);
-    } catch (error) {
-      console.error("AI Generation failed", error);
-    } finally {
-      setIsGenerating(false);
-    }
   };
 
   return (
@@ -117,12 +95,6 @@ export default function AdminDashboard() {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === "profile" ? "bg-primary text-white" : "text-muted-foreground hover:bg-white/5"}`}
           >
             <UserCircle size={20} /> Profile
-          </button>
-          <button 
-            onClick={() => setActiveTab("ai-tool")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === "ai-tool" ? "bg-primary text-white" : "text-muted-foreground hover:bg-white/5"}`}
-          >
-            <Wand2 size={20} /> AI Assistant
           </button>
         </nav>
 
@@ -243,58 +215,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
-            </div>
-          )}
-
-          {activeTab === "ai-tool" && (
-            <div className="space-y-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold font-headline flex items-center gap-3">
-                  <Wand2 className="text-primary" /> AI Project Copywriter
-                </h2>
-                <p className="text-muted-foreground mt-2">Transform raw notes into professional copy.</p>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="glass-card p-6 rounded-2xl space-y-4">
-                    <Label>Context Notes</Label>
-                    <Textarea 
-                      placeholder="Technical details..."
-                      className="bg-white/5 border-white/10 min-h-[120px]"
-                      value={technicalNotes}
-                      onChange={(e) => setTechnicalNotes(e.target.value)}
-                    />
-                    <Label>Bullet Points</Label>
-                    <Textarea 
-                      placeholder="Features..."
-                      className="bg-white/5 border-white/10 min-h-[120px]"
-                      value={bulletPoints}
-                      onChange={(e) => setBulletPoints(e.target.value)}
-                    />
-                  </div>
-                  <Button onClick={handleAiGenerate} disabled={isGenerating || !technicalNotes} className="w-full">
-                    {isGenerating ? <Loader2 className="animate-spin mr-2" /> : <Wand2 className="mr-2" />}
-                    GENERATE
-                  </Button>
-                </div>
-
-                {aiResult && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-card p-6 rounded-2xl space-y-6">
-                    <div>
-                      <Label className="text-accent text-[10px] uppercase font-bold">Summary</Label>
-                      <p className="text-sm italic">{aiResult.summary}</p>
-                    </div>
-                    <div>
-                      <Label className="text-accent text-[10px] uppercase font-bold">Description</Label>
-                      <p className="text-sm text-muted-foreground">{aiResult.description}</p>
-                    </div>
-                    <Button variant="outline" className="w-full" onClick={() => navigator.clipboard.writeText(aiResult.description)}>
-                      Copy to Clipboard
-                    </Button>
-                  </motion.div>
-                )}
-              </div>
             </div>
           )}
         </div>
