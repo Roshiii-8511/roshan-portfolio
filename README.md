@@ -20,13 +20,22 @@ Ensure these Google Cloud APIs are enabled for project `portfolio-abc19`:
 - [Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com)
 - [Secret Manager API](https://console.cloud.google.com/apis/library/secretmanager.googleapis.com)
 
-### 4. Manual Rollout (Alternative)
-If Studio publishing continues to fail, go to the [App Hosting Console](https://console.firebase.google.com/project/portfolio-abc19/apphosting) and click **"Create a backend"**. Point it to your GitHub repository to trigger the deployment manually.
+### 4. Accessing Logs (Where to find what went wrong)
+If the automated rollout fails, you can find the detailed reason here:
+- **Cloud Build Logs**: Most App Hosting failures happen during the build. Check [Google Cloud Build History](https://console.cloud.google.com/cloud-build/builds).
+- **Logs Explorer**: Go to [Logs Explorer](https://console.cloud.google.com/logs/query) and search for `resource.type="apphosting.googleapis.com/Backend"`.
 
-### 5. Accessing Logs
-Detailed build logs can be found here once a rollout starts:
-- **Build Logs**: [Google Cloud Build Dashboard](https://console.cloud.google.com/cloud-build/builds)
-- **Deployment Logs**: [Firebase App Hosting Dashboard](https://console.firebase.google.com/project/portfolio-abc19/apphosting) -> Select your backend -> View Rollouts.
+### 5. Manual Rollout (Alternative)
+If Studio publishing continues to fail, you can manually connect your project to App Hosting:
+1. Go to the [Firebase App Hosting Console](https://console.firebase.google.com/project/portfolio-abc19/apphosting).
+2. Click **"Create a backend"**.
+3. Choose the option to connect to a **GitHub repository**.
+4. Point it to your repository to trigger the deployment manually. This bypasses the Studio's "Publish" button.
+
+### 6. Runtime Permissions
+If you see "Missing or insufficient permissions" when saving data:
+- Ensure your UID `OHlnuIdOjoNhttmiChcCiVfe5cD3` is added as a document in the `roles_admin` collection in Firestore.
+- Add a field like `role: "admin"` or `isAdmin: true` so you can save the document.
 
 ## Local Development
 
