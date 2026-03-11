@@ -12,24 +12,24 @@ If the automated button fails, you can connect your project manually:
 2. Click **"Create a backend"**.
 3. Connect your **GitHub repository** directly. This is the official way to deploy and bypasses the Studio "snag".
 
-### 2. Check Service Account Permissions
-Sometimes the deployment fails because the "App Hosting" service account doesn't have permissions.
+### 2. CLI Authentication & Deployment
+If you get "not yet authenticated" or "No currently active project" in the terminal:
+1. Run `firebase login --no-localhost` and follow the provided URL.
+2. Run `firebase use portfolio-abc19` to set the active project.
+3. Run `firebase deploy` to sync your rules and indexes.
+
+### 3. Service Account Permissions
+Ensure the "App Hosting" service account has proper permissions:
 1. Go to [IAM & Admin](https://console.cloud.google.com/iam-admin/iam) in Google Cloud.
 2. Find the service account for App Hosting (usually ends in `@apphosting.gserviceaccount.com`).
 3. Ensure it has the **"Editor"** or **"App Hosting Admin"** role.
 
-### 3. CLI Auth Issues
-If you get "not yet authenticated" in the terminal:
-- Run `firebase login --no-localhost` and follow the link.
-- Ensure you have a `firebase.json` file in your root (I have added this for you).
-
-### 4. Accessing Build Logs
-- **Cloud Build Logs**: Most failures happen during the build. Check [Google Cloud Build History](https://console.cloud.google.com/cloud-build/builds).
-- **Logs Explorer**: Search for `resource.type="apphosting.googleapis.com/Backend"` in the [Logs Explorer](https://console.cloud.google.com/logs/query).
-
-### 5. Runtime Permissions (Firestore)
-- Ensure your UID `OHlnuIdOjoNhttmiChcCiVfe5cD3` is added as a document in the `roles_admin` collection in Firestore.
-- Add a field like `role: "admin"` so you can save the document.
+### 4. Firestore Permissions (Admin Access)
+To allow the Admin Dashboard to save changes:
+1. Go to Firestore in the Firebase Console.
+2. Create a collection named `roles_admin`.
+3. Create a document with ID `OHlnuIdOjoNhttmiChcCiVfe5cD3`.
+4. Add a field: `role: "admin"`.
 
 ## Local Development
 

@@ -19,7 +19,6 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
-  // Sorting logic to keep Premium Web Apps at the top
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -72,14 +71,14 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
-                scale: 1.08, 
-                y: -20,
-                boxShadow: "0 50px 100px -20px rgba(0,0,0,0.9), 0 0 40px rgba(255, 123, 0, 0.5)",
-                borderColor: "hsla(29, 100%, 50%, 0.8)",
+                scale: 1.03, 
+                y: -10,
+                boxShadow: "0 30px 60px -15px rgba(0,0,0,0.5), 0 0 20px rgba(255, 123, 0, 0.2)",
+                borderColor: "hsla(29, 100%, 50%, 0.4)",
                 zIndex: 10
               }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300 bg-white/[0.02] relative"
             >
               <div className="relative aspect-video overflow-hidden">
@@ -101,7 +100,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                               src={img}
                               alt={`${project.title} - image ${i + 1}`}
                               fill
-                              className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                              className="object-cover transition-transform duration-1000 group-hover:scale-105"
                             />
                           </div>
                         </CarouselItem>

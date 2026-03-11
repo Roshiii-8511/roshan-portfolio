@@ -52,23 +52,23 @@ export function Expertise() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ 
-              scale: 1.08, 
-              y: -20,
-              rotateX: 4,
-              rotateY: 4,
-              boxShadow: "0 40px 80px -20px rgba(255, 123, 0, 0.5), 0 0 40px rgba(255, 123, 0, 0.2)",
-              borderColor: "hsla(29, 100%, 50%, 0.8)",
-              backgroundColor: "rgba(255, 255, 255, 0.08)"
+              scale: 1.05, 
+              y: -10,
+              rotateX: 2,
+              rotateY: 2,
+              boxShadow: "0 20px 40px -10px rgba(255, 123, 0, 0.3)",
+              borderColor: "hsla(29, 100%, 50%, 0.5)",
+              backgroundColor: "rgba(255, 255, 255, 0.05)"
             }}
             transition={{ 
               type: "spring", 
-              stiffness: 400, 
-              damping: 15,
+              stiffness: 300, 
+              damping: 20,
               delay: index * 0.05 
             }}
             className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default relative overflow-hidden"
           >
-            <div className={`mb-6 ${item.color} group-hover:scale-125 transition-transform duration-300 ease-out flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.03]`}>
+            <div className={`mb-6 ${item.color} group-hover:scale-110 transition-transform duration-300 ease-out flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.03]`}>
               <item.icon size={36} />
             </div>
             <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">
