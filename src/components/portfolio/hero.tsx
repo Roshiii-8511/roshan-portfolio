@@ -13,7 +13,7 @@ export function Hero({ content }: { content: SiteContent }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        whileHover={{ scale: 1.1, rotate: 2, y: -10 }}
+        whileHover={{ scale: 1.15, rotate: 2, y: -15, boxShadow: "0 0 60px rgba(255, 123, 0, 0.5)" }}
         transition={{ duration: 0.8, type: "spring", stiffness: 300 }}
         className="relative mb-12 cursor-pointer z-10"
       >
@@ -38,7 +38,7 @@ export function Hero({ content }: { content: SiteContent }) {
       >
         <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tighter leading-none uppercase">
           Architecting<br />
-          <span className="text-primary text-glow-orange">Autonomous AI Systems</span>
+          <span className="text-primary text-glow-orange">{content.headline || "Autonomous AI Systems"}</span>
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl font-medium tracking-wide font-code">
           ROSHAN SINGH — ENGINEER OF EFFICIENCY, ARCHITECT OF AUTOMATION.

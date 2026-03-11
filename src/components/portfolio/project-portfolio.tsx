@@ -75,8 +75,10 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               whileHover={{ 
                 scale: 1.05, 
                 y: -15,
-                boxShadow: "0 35px 70px -15px rgba(0,0,0,0.6), 0 0 30px rgba(255, 123, 0, 0.25)",
-                borderColor: "hsla(29, 100%, 50%, 0.5)",
+                rotateX: 2,
+                rotateY: 2,
+                boxShadow: "0 45px 80px -20px rgba(0,0,0,0.8), 0 0 40px rgba(255, 123, 0, 0.4)",
+                borderColor: "hsla(29, 100%, 50%, 0.8)",
                 zIndex: 10
               }}
               exit={{ opacity: 0, scale: 0.9 }}

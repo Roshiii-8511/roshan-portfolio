@@ -2,14 +2,15 @@
 
 This is a NextJS 15 portfolio site built with React, Tailwind CSS, and Firebase.
 
-## FIXING "BACKEND NOT FOUND"
-If you see the **"Backend Not Found"** error at your live link, it means the hosting service is ready but no code has landed. 
+## FIXING THE "BACKEND NOT FOUND" ERROR
+If you see the **"Backend Not Found"** or "No backends found" error at your live link, it means the hosting service is configured but no code has been successfully pushed to it.
 
 **Steps to fix:**
-1. **GitHub Connection**: Go to the [Firebase App Hosting Console](https://console.firebase.google.com/project/portfolio-abc19/apphosting).
+1. **Connect GitHub**: Go to the [Firebase App Hosting Console](https://console.firebase.google.com/project/portfolio-abc19/apphosting).
 2. Click **"Create a backend"**.
-3. Connect your **GitHub repository** where this code is pushed.
-4. Firebase will automatically trigger a build (Rollout). Once finished, your site will be live.
+3. Connect your **GitHub repository** where this code is stored.
+4. Select **Singapore (asia-southeast1)** as your primary region.
+5. Firebase will automatically trigger a build (Rollout). Once it finishes, your live link will show your site instead of the error.
 
 ## Administrative Setup
 To allow the Admin Dashboard to save changes:
@@ -18,7 +19,7 @@ To allow the Admin Dashboard to save changes:
 3. Create a document with ID `OHlnuIdOjoNhttmiChcCiVfe5cD3`.
 4. Add a field: `role: "admin"`.
 
-## Development Features
-- **Premium Sorting**: "Premium Web Apps" are automatically prioritized.
-- **Enhanced UI**: Features "Real" zoom and lift hover effects using Framer Motion.
-- **Centralized Data**: All global content is managed via the `globalContent` collection.
+## UI Features
+- **Premium Effects**: Real 3D zoom and lift hover effects using Framer Motion on all expertise and project cards.
+- **Smart Sorting**: "Premium Web Apps" are automatically prioritized at the top of the portfolio.
+- **Integrated Socials**: Direct links to LinkedIn, GitHub, Instagram, and Gmail in the footer.
