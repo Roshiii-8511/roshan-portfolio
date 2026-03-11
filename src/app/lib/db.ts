@@ -49,6 +49,7 @@ export const getProjects = async (db: Firestore): Promise<Project[]> => {
 
 export const getSiteContent = async (db: Firestore): Promise<SiteContent> => {
   try {
+    // Fix: Unified collection path to globalContent
     const docRef = doc(db, 'globalContent', 'main-config');
     const snapshot = await getDoc(docRef);
     if (snapshot.exists()) {
@@ -74,6 +75,7 @@ export async function uploadImage(storage: FirebaseStorage, file: File, path: st
 export const saveAllChanges = async (db: Firestore, siteContent: SiteContent, projects: Project[]) => {
   const batch = writeBatch(db);
 
+  // Fix: Unified collection path to globalContent
   const siteRef = doc(db, 'globalContent', 'main-config');
   batch.set(siteRef, { ...siteContent }, { merge: true });
 

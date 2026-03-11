@@ -4,38 +4,32 @@ This is a NextJS 15 portfolio site built with React, Tailwind CSS, and Firebase.
 
 ## Deployment Troubleshooting (IMPORTANT)
 
-If the "Publish" button in Firebase Studio fails with "Something went wrong creating your App Hosting rollout", please follow these steps:
+If the "Publish" button in Firebase Studio fails with "Something went wrong creating your App Hosting rollout", follow these steps to fix and publish:
 
-### 1. Standardize Collection Names
-Ensure your code and `backend.json` are synced. The code has been updated to use `globalContent` for site configuration.
-
-### 2. Check Project Billing (CRITICAL)
-App Hosting **requires** the **Blaze Plan (Pay-as-you-go)**. 
-- Go to the [Firebase Console Billing Section](https://console.firebase.google.com/project/_/usage/details) to verify.
-
-### 3. Enable Required APIs
-Ensure these Google Cloud APIs are enabled for project `portfolio-abc19`:
-- [Cloud Build API](https://console.cloud.google.com/apis/library/cloudbuild.googleapis.com)
-- [Artifact Registry API](https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com)
-- [Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com)
-- [Secret Manager API](https://console.cloud.google.com/apis/library/secretmanager.googleapis.com)
-
-### 4. Accessing Logs (Where to find what went wrong)
-If the automated rollout fails, you can find the detailed reason here:
-- **Cloud Build Logs**: Most App Hosting failures happen during the build. Check [Google Cloud Build History](https://console.cloud.google.com/cloud-build/builds).
-- **Logs Explorer**: Go to [Logs Explorer](https://console.cloud.google.com/logs/query) and search for `resource.type="apphosting.googleapis.com/Backend"`.
-
-### 5. Manual Rollout (Alternative)
-If Studio publishing continues to fail, you can manually connect your project to App Hosting:
+### 1. Manual Rollout (BEST FIX)
+If the automated button fails, you can connect your project manually:
 1. Go to the [Firebase App Hosting Console](https://console.firebase.google.com/project/portfolio-abc19/apphosting).
 2. Click **"Create a backend"**.
-3. Choose the option to connect to a **GitHub repository**.
-4. Point it to your repository to trigger the deployment manually. This bypasses the Studio's "Publish" button.
+3. Connect your **GitHub repository** directly. This is the official way to deploy and bypasses the Studio "snag".
 
-### 6. Runtime Permissions
-If you see "Missing or insufficient permissions" when saving data:
+### 2. Check Service Account Permissions
+Sometimes the deployment fails because the "App Hosting" service account doesn't have permissions.
+1. Go to [IAM & Admin](https://console.cloud.google.com/iam-admin/iam) in Google Cloud.
+2. Find the service account for App Hosting (usually ends in `@apphosting.gserviceaccount.com`).
+3. Ensure it has the **"Editor"** or **"App Hosting Admin"** role.
+
+### 3. CLI Auth Issues
+If you get "not yet authenticated" in the terminal:
+- Run `firebase login --no-localhost` and follow the link.
+- Ensure you have a `firebase.json` file in your root (I have added this for you).
+
+### 4. Accessing Build Logs
+- **Cloud Build Logs**: Most failures happen during the build. Check [Google Cloud Build History](https://console.cloud.google.com/cloud-build/builds).
+- **Logs Explorer**: Search for `resource.type="apphosting.googleapis.com/Backend"` in the [Logs Explorer](https://console.cloud.google.com/logs/query).
+
+### 5. Runtime Permissions (Firestore)
 - Ensure your UID `OHlnuIdOjoNhttmiChcCiVfe5cD3` is added as a document in the `roles_admin` collection in Firestore.
-- Add a field like `role: "admin"` or `isAdmin: true` so you can save the document.
+- Add a field like `role: "admin"` so you can save the document.
 
 ## Local Development
 

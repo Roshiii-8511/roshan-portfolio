@@ -19,6 +19,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
+  // Sorting logic to keep Premium Web Apps at the top
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -71,10 +72,11 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
-                scale: 1.05, 
-                y: -15,
-                boxShadow: "0 50px 100px -20px rgba(0,0,0,0.8), 0 0 30px rgba(255, 123, 0, 0.4)",
-                borderColor: "hsla(29, 100%, 50%, 0.6)"
+                scale: 1.08, 
+                y: -20,
+                boxShadow: "0 50px 100px -20px rgba(0,0,0,0.9), 0 0 40px rgba(255, 123, 0, 0.5)",
+                borderColor: "hsla(29, 100%, 50%, 0.8)",
+                zIndex: 10
               }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 350, damping: 20 }}
