@@ -6,6 +6,11 @@ import Image from "next/image";
 import { SiteContent } from "@/app/lib/db";
 
 export function Hero({ content }: { content: SiteContent }) {
+  const headline = content.headline || "Architecting Autonomous AI Systems";
+  const words = headline.split(' ');
+  const firstWord = words[0];
+  const restOfHeadline = words.slice(1).join(' ');
+
   return (
     <section className="relative min-h-[70vh] flex flex-col items-center justify-center pt-12 pb-24 px-4 overflow-hidden">
       {/* Background Glow */}
@@ -43,8 +48,8 @@ export function Hero({ content }: { content: SiteContent }) {
         className="text-center max-w-5xl"
       >
         <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tighter leading-none uppercase">
-          Architecting<br />
-          <span className="text-primary text-glow-orange">{content.headline || "Autonomous AI Systems"}</span>
+          {firstWord}<br />
+          <span className="text-primary text-glow-orange">{restOfHeadline}</span>
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl font-medium tracking-wide font-code">
           ROSHAN SINGH — ENGINEER OF EFFICIENCY, ARCHITECT OF AUTOMATION.
