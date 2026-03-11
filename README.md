@@ -1,30 +1,83 @@
-<<<<<<< HEAD
-
 # Roshan Singh | AI & Automation Portfolio
 
-This is a NextJS 15 portfolio site built with React, Tailwind CSS, and Firebase.
+This is a **Next.js 15 portfolio website** built using **React, Tailwind CSS, and Firebase**.
+The project showcases AI automation systems, web applications, and engineering work.
 
-## FIXING THE "BACKEND NOT FOUND" ERROR
-If you see the **"Backend Not Found"** or "No backends found" error at your live link, it means the hosting service is configured but no code has been successfully pushed to it.
+---
 
-**Steps to fix:**
-1. **Connect GitHub**: Go to the [Firebase App Hosting Console](https://console.firebase.google.com/project/portfolio-abc19/apphosting).
-2. Click **"Create a backend"**.
-3. Connect your **GitHub repository** where this code is stored.
-4. Select **Singapore (asia-southeast1)** as your primary region.
-5. Firebase will automatically trigger a build (Rollout). Once it finishes, your live link will show your site instead of the error.
+## Live Deployment
 
-## Administrative Setup
-To allow the Admin Dashboard to save changes:
-1. Go to Firestore in the Firebase Console.
-2. Create a collection named `roles_admin`.
-3. Create a document with ID `OHlnuIdOjoNhttmiChcCiVfe5cD3`.
-4. Add a field: `role: "admin"`.
+This project is deployed using **Firebase App Hosting** connected to a GitHub repository.
+
+If the live link shows **"Backend Not Found"**, it means the hosting backend exists but the code has not yet been deployed successfully.
+
+### Fix Steps
+
+1. Open the Firebase Console.
+2. Go to **App Hosting**.
+3. Create or connect a **backend**.
+4. Connect the **GitHub repository** containing this code.
+5. Select **asia-southeast1 (Singapore)** as the primary region.
+6. Firebase will automatically run a **build and rollout**.
+
+Once the rollout finishes, the website will be live.
+
+---
+
+## Tech Stack
+
+* Next.js 15
+* React
+* Tailwind CSS
+* Firebase App Hosting
+* Firestore Database
+* Firebase Storage
+
+---
+
+## Firebase Setup
+
+### Firestore Configuration
+
+To allow the **Admin Dashboard** to save data:
+
+1. Go to **Firestore Database** in the Firebase Console.
+2. Create a collection:
+
+```
+roles_admin
+```
+
+3. Create a document with ID:
+
+```
+OHlnuIdOjoNhttmiChcCiVfe5cD3
+```
+
+4. Add a field:
+
+```
+role: "admin"
+```
+
+---
 
 ## UI Features
-- **Premium Effects**: Real 3D zoom and lift hover effects using Framer Motion on all expertise and project cards.
-- **Smart Sorting**: "Premium Web Apps" are automatically prioritized at the top of the portfolio.
-- **Integrated Socials**: Direct links to LinkedIn, GitHub, Instagram, and Gmail in the footer.
-=======
-# Roshan AI Automation Portfolio
->>>>>>> 2b0edfbd8674420df2a16e40f0cbf0349a3e07c6
+
+* **3D Hover Effects**
+  Expertise and project cards use Framer Motion for smooth lift and zoom interactions.
+
+* **Smart Project Sorting**
+  Premium web apps automatically appear at the top of the portfolio.
+
+* **Social Integration**
+  Direct links to LinkedIn, GitHub, Instagram, and Email in the footer.
+
+---
+
+## Author
+
+**Roshan Singh**
+AI Automation Engineer & Developer
+
+GitHub: https://github.com/Roshiii-8511
