@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -52,23 +53,23 @@ export function Expertise() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ 
-              scale: 1.1, 
-              y: -20,
-              rotateX: 10,
-              rotateY: 10,
-              boxShadow: "0 35px 60px -15px rgba(255, 123, 0, 0.5)",
-              borderColor: "hsla(29, 100%, 50%, 0.9)",
-              backgroundColor: "rgba(255, 255, 255, 0.1)"
+              scale: 1.08, 
+              y: -15,
+              rotateX: 5,
+              rotateY: 5,
+              boxShadow: "0 40px 80px -15px rgba(255, 123, 0, 0.4)",
+              borderColor: "hsla(29, 100%, 50%, 0.6)",
+              backgroundColor: "rgba(255, 255, 255, 0.05)"
             }}
             transition={{ 
               type: "spring", 
-              stiffness: 400, 
-              damping: 25,
+              stiffness: 300, 
+              damping: 20,
               delay: index * 0.05 
             }}
-            className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default relative overflow-hidden"
+            className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default relative overflow-hidden perspective-1000"
           >
-            <div className={`mb-6 ${item.color} group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300 ease-out flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.03]`}>
+            <div className={`mb-6 ${item.color} group-hover:scale-125 group-hover:rotate-6 transition-transform duration-300 ease-out flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.03]`}>
               <item.icon size={36} />
             </div>
             <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">

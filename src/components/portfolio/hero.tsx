@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -13,7 +14,12 @@ export function Hero({ content }: { content: SiteContent }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        whileHover={{ scale: 1.15, rotate: 2, y: -15, boxShadow: "0 0 60px rgba(255, 123, 0, 0.5)" }}
+        whileHover={{ 
+          scale: 1.15, 
+          rotate: 2, 
+          y: -15, 
+          boxShadow: "0 0 60px rgba(255, 123, 0, 0.5)" 
+        }}
         transition={{ duration: 0.8, type: "spring", stiffness: 300 }}
         className="relative mb-12 cursor-pointer z-10"
       >
