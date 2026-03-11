@@ -53,22 +53,22 @@ export function Expertise() {
             viewport={{ once: true }}
             whileHover={{ 
               scale: 1.05, 
-              y: -10,
-              rotateX: 2,
-              rotateY: 2,
-              boxShadow: "0 20px 40px -10px rgba(255, 123, 0, 0.3)",
-              borderColor: "hsla(29, 100%, 50%, 0.5)",
-              backgroundColor: "rgba(255, 255, 255, 0.05)"
+              y: -15,
+              rotateX: 5,
+              rotateY: 5,
+              boxShadow: "0 25px 50px -12px rgba(255, 123, 0, 0.4)",
+              borderColor: "hsla(29, 100%, 50%, 0.6)",
+              backgroundColor: "rgba(255, 255, 255, 0.08)"
             }}
             transition={{ 
               type: "spring", 
-              stiffness: 300, 
-              damping: 20,
+              stiffness: 400, 
+              damping: 25,
               delay: index * 0.05 
             }}
             className="glass-card p-8 rounded-[2.5rem] border-white/5 transition-all group cursor-default relative overflow-hidden"
           >
-            <div className={`mb-6 ${item.color} group-hover:scale-110 transition-transform duration-300 ease-out flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.03]`}>
+            <div className={`mb-6 ${item.color} group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 ease-out flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.03]`}>
               <item.icon size={36} />
             </div>
             <h3 className="font-headline text-xl font-bold mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">
@@ -78,7 +78,7 @@ export function Expertise() {
               {item.description}
             </p>
             <div className="absolute bottom-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500" />
-            <div className="absolute -inset-4 bg-primary/5 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity pointer-events-none" />
+            <div className="absolute -inset-4 bg-primary/5 opacity-0 group-hover:opacity-100 blur-3xl transition-opacity pointer-events-none" />
           </motion.div>
         ))}
       </div>

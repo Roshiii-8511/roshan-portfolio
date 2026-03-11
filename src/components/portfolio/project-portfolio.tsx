@@ -19,6 +19,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
+  // Sorting priority: Premium Web Apps first
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -31,7 +32,10 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
         const priorityA = categoryPriority[a.category?.toUpperCase() || ""] || 99;
         const priorityB = categoryPriority[b.category?.toUpperCase() || ""] || 99;
         if (priorityA !== priorityB) return priorityA - priorityB;
-        return 0;
+        // Secondary sort by date
+        const dateA = a.createdAt?.seconds || 0;
+        const dateB = b.createdAt?.seconds || 0;
+        return dateB - dateA;
       })
     : safeProjects.filter(p => p.category?.toUpperCase() === activeCategory);
 
@@ -71,14 +75,14 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
-                scale: 1.03, 
-                y: -10,
-                boxShadow: "0 30px 60px -15px rgba(0,0,0,0.5), 0 0 20px rgba(255, 123, 0, 0.2)",
-                borderColor: "hsla(29, 100%, 50%, 0.4)",
+                scale: 1.05, 
+                y: -15,
+                boxShadow: "0 35px 70px -15px rgba(0,0,0,0.6), 0 0 30px rgba(255, 123, 0, 0.25)",
+                borderColor: "hsla(29, 100%, 50%, 0.5)",
                 zIndex: 10
               }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300 bg-white/[0.02] relative"
             >
               <div className="relative aspect-video overflow-hidden">
@@ -100,7 +104,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                               src={img}
                               alt={`${project.title} - image ${i + 1}`}
                               fill
-                              className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                              className="object-cover transition-transform duration-1000 group-hover:scale-110"
                             />
                           </div>
                         </CarouselItem>
@@ -109,7 +113,7 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
                   </Carousel>
                 ) : (
                   <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                    <span className="text-xs text-muted-foreground font-code">NO DATA AVAILABLE</span>
+                    <span className="text-xs text-muted-foreground font-code uppercase tracking-widest">NO ASSETS FOUND</span>
                   </div>
                 )}
                 <div className="absolute top-6 left-6 z-10">

@@ -21,7 +21,6 @@ export default function Home() {
   const { data: projectsData, loading: projectsLoading } = useCollection<Project>(projectsQuery);
   
   const siteContentRef = useMemoFirebase(() => {
-    // Standardized to globalContent/main-config to fix permission errors
     return doc(db, 'globalContent', 'main-config');
   }, [db]);
   
