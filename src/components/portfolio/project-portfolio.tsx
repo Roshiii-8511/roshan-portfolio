@@ -76,14 +76,14 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
               whileHover={{ 
                 scale: 1.05, 
                 y: -15,
-                rotateX: 2,
-                rotateY: 2,
+                rotateX: 4,
+                rotateY: 4,
                 boxShadow: "0 45px 80px -20px rgba(0,0,0,0.8), 0 0 40px rgba(255, 123, 0, 0.4)",
                 borderColor: "hsla(29, 100%, 50%, 0.8)",
                 zIndex: 10
               }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
               className="glass-card rounded-[2.5rem] overflow-hidden group border-white/5 cursor-pointer transition-all duration-300 bg-white/[0.02] relative"
             >
               <div className="relative aspect-video overflow-hidden">
