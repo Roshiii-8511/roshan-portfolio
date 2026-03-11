@@ -53,13 +53,13 @@ export function Expertise() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ 
-              scale: 1.1, 
+              scale: 1.08, 
               y: -15,
-              rotateX: 8,
-              rotateY: 8,
-              boxShadow: "0 40px 80px -15px rgba(255, 123, 0, 0.4)",
-              borderColor: "hsla(29, 100%, 50%, 0.6)",
-              backgroundColor: "rgba(255, 255, 255, 0.05)"
+              rotateX: 5,
+              rotateY: 5,
+              boxShadow: "0 40px 80px -15px rgba(255, 123, 0, 0.3)",
+              borderColor: "hsla(29, 100%, 50%, 0.4)",
+              backgroundColor: "rgba(255, 255, 255, 0.04)"
             }}
             transition={{ 
               type: "spring", 
