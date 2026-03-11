@@ -19,7 +19,6 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
 
   const safeProjects = Array.isArray(projects) ? projects : [];
 
-  // Sorting priority: Premium Web Apps first
   const categoryPriority: Record<string, number> = {
     "PREMIUM WEB APPS": 1,
     "ADVANCED WEB SCRAPING": 2,
@@ -32,7 +31,6 @@ export function ProjectPortfolio({ projects = [] }: { projects?: Project[] }) {
         const priorityA = categoryPriority[a.category?.toUpperCase() || ""] || 99;
         const priorityB = categoryPriority[b.category?.toUpperCase() || ""] || 99;
         if (priorityA !== priorityB) return priorityA - priorityB;
-        // Secondary sort by date
         const dateA = a.createdAt?.seconds || 0;
         const dateB = b.createdAt?.seconds || 0;
         return dateB - dateA;
