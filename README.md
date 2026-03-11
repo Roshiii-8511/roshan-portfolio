@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # Roshan Singh | AI & Automation Portfolio
 
@@ -24,3 +25,6 @@ To allow the Admin Dashboard to save changes:
 - **Premium Effects**: Real 3D zoom and lift hover effects using Framer Motion on all expertise and project cards.
 - **Smart Sorting**: "Premium Web Apps" are automatically prioritized at the top of the portfolio.
 - **Integrated Socials**: Direct links to LinkedIn, GitHub, Instagram, and Gmail in the footer.
+=======
+# Roshan AI Automation Portfolio
+>>>>>>> 2b0edfbd8674420df2a16e40f0cbf0349a3e07c6
